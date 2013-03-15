@@ -1,6 +1,7 @@
 #!/bin/bash
 
-keywords="adaptation vulnerability climate+impact adaptative vulnerable"
+#keywords="adaptation vulnerability climate+impact adaptative vulnerable"
+keywords="a"
 baseurl="http://unfccc.int/documentation/documents/advanced_search/items/"
 searchpage="3594.php?searchterm="
 detailspage="6911.php?priref="
@@ -13,7 +14,7 @@ mkdir -p tmp pdfs
 echo "$fields" > $csvfile
 
 for search in $keywords; do
-  maxpage=`curl "$baseurl$searchpage$search" -s -S | grep "go to last page" | sed 's/^.*&page=//' | sed 's/" title=.*$//'`
+  maxpage=`curl "$baseurl$searchpage$search " -s -S | grep "go to last page" | sed 's/^.*&page=//' | sed 's/" title=.*$//'`
   if [ "$maxpage" == "" ]; then
     maxpage=1
   fi
