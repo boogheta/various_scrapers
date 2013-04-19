@@ -1,0 +1,5 @@
+*.json
+*.sql
+*.gexf
+*.csv
+*.tar.gz
