@@ -35,13 +35,13 @@ fi
 
 
 if [ ! -f "$list.left" ]; then
-  cp $list{,.original}
-  cp $list{,.left}
+  sed 's/\r//g' $list > $list.original
+  cp $list.{original,left}
 fi
 mkdir -p json
 touch $list.done
 
-cat $list.left | sed 's/\r//g' | while read line; do
+cat $list.left | while read line; do
   echo "Retrieving results for « $line »..."
   keyword=`echo $line | sed 's/ /+/g' | sed 's/"/%22/g'`
   for page in `seq $totalpages`; do
