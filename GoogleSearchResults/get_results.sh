@@ -1,11 +1,12 @@
 #!/bin/bash
-# Usage : ./get_results.sh <list_keywords_file> [<N_results>] [<url_seeks_node>]
+# Usage : ./get_results.sh <list_keywords_file> [<N_results>] [<search_lang>] [<url_seeks_node>]
 # Example : ./get_results.sh keywords.txt 200 http://seeks.fr
 # Defaults to 100 results on http://localhost:8080
 
 list=$1
-seeknode="http://localhost:8080"
 n_results=100
+lang="en"
+seeknode="http://localhost:8080"
 
 if [ -z "$list" ] || [ ! -f "$list" ]; then
   echo "Please specify a valid keyword list file"
@@ -19,6 +20,10 @@ totalpages=$((($n_results - 1) / 100 + 1))
 expansion=$(($totalpages + 1))
 
 if [ ! -z "$3" ]; then
+  lang=$3
+fi
+
+if [ ! -z "$4" ]; then
   seeknode=`echo $3 | sed 's#/\+$##'`
   testseeks=`curl -sL $seeknode | grep "seeks.git.sourceforge.net" | wc -l`
   if [ $testseeks -lt 1 ] || echo $seeknode | grep -v 'http://'; then
@@ -46,7 +51,7 @@ cat $list.left | while read line; do
   keyword=`echo $line | sed 's/ /+/g' | sed 's/"/%22/g'`
   for page in `seq $totalpages`; do
     echo " page $(($page))"
-    curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > json/$keyword-$page.json
+    curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&lang=$lang&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > json/$keyword-$page.json
     res=`grep '{"id":' json/$keyword-$page.json | wc -l`
     if [ $res -lt 1 ]; then
       if [ $page -eq 1 ]; then

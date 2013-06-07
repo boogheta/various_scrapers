@@ -9,7 +9,7 @@ Read/run ``seeks/INSTALL`` to install and configure locally.
 
 ## Arguments and example
 
-``./get_results.sh <list_keywords_file> [<N_results>] [<url_seeks_node>]``
+``./get_results.sh <list_keywords_file> [<N_results>] [<search_lang>] [<url_seeks_node>]``
 
 * ``list_keywords_file``: path to a text file containing a list of search queries listed as lines (example given in ``keywords_example.txt``)
 * ``N_results``: maximum number of results desired for each keyword (optional, defaults to 100)
