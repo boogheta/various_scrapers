@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage : ./get_results.sh <list_keywords_file> [<N_results>] [<search_lang>] [<url_seeks_node>]
-# Example : ./get_results.sh keywords.txt 200 http://seeks.fr
-# Defaults to 100 results on http://localhost:8080
+# Example : ./get_results.sh keywords.txt 200 fr http://seeks.fr
+# Defaults to 100 results on http://localhost:8080 and on lang en
 
 list=$1
 n_results=100
@@ -49,10 +49,11 @@ touch $list.done
 cat $list.left | while read line; do
   echo "Retrieving results for « $line »..."
   keyword=`echo $line | sed 's/ /+/g' | sed 's/"/%22/g'`
+  filename=`echo $line | sed 's/[^a-z0-9]//ig'`
   for page in `seq $totalpages`; do
     echo " page $(($page))"
-    curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&lang=$lang&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > json/$keyword-$page.json
-    res=`grep '{"id":' json/$keyword-$page.json | wc -l`
+    curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&lang=$lang&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > json/$filename-$page.json
+    res=`grep '{"id":' json/$filename-$page.json | wc -l`
     if [ $res -lt 1 ]; then
       if [ $page -eq 1 ]; then
         echo "WARNING: Google limit reached, please open a Google searchpage in a browser using proxy.medialab.sciences-po.fr:3128 as proxy and run captcha:"
@@ -69,14 +70,14 @@ cat $list.left | while read line; do
     usec=$(($RANDOM % 10))
     sleep $sec.$usec
   done
-  res=`grep '{"id":' json/$keyword-*.json | wc -l`
+  res=`grep '{"id":' json/$filename-*.json | wc -l`
   echo "  -> $res results collected"
   echo $line >> $list.done
   grep -v "$line" $list.left > $list.todo
   mv $list.todo $list.left
 done
 
-if grep '<' $list.done $list.original > /dev/null ; then
+if [ $(diff $list.done $list.original | wc -l) -eq 0 ]; then
   echo "All keywords searched and finished"
   echo "Results in json/"
   rm $list.done $list.original $list.left
