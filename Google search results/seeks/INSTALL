@@ -7,7 +7,7 @@ cp seeks-config/config seeks-0.4.0/src/
 cp seeks-config/plugins/websearch/websearch-config seeks-0.4.0/src/plugins/websearch/websearch-config
 
 # Install dependencies
-sudo apt-get install autoconf automake libtool libpcre3 libpcre3-dev libxml2 libxml2-dev libltdl-dev docbook2x libcurl3 libcurl3-dev libevent-2.0-5 libcv2.3 libperl5.14 libtokyocabinet8 libtokyocabinet-dev libprotobuf7 libprotobuf-dev protobuf-compiler libprotoc-dev libjsoncpp-dev libmhash-dev
+sudo apt-get install autoconf automake libtool libpcre3 libpcre3-dev libxml2 libxml2-dev libltdl-dev docbook2x libcurl3 libcurl3-dev libevent-2.0-5 libevent-dev libcv2.3 libperl5.14 libtokyocabinet8 libtokyocabinet-dev libprotobuf7 libprotobuf-dev protobuf-compiler libprotoc-dev libjsoncpp-dev libmhash-dev
 
 # Build
 cd seeks-0.4.0
