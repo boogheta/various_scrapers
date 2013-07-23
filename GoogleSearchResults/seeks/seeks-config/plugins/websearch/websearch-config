@@ -96,7 +96,7 @@ extended-highlight 1
 # Sets a proxy through which to fetch the background URLs Seeks needs,
 # to grab search engine results and content, as required.
 # default:
-background-proxy-addr proxy.medialab.sciences-po.fr:3128
+background-proxy-addr proxy.host.example.fr:3128
 
 # Renders the node IP address in the info bar, or not.
 # default: 0

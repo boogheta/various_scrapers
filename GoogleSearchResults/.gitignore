@@ -1,4 +1,9 @@
 *.txt
-json*
+*.csv
+*.json
+*.done
+*.left
+*.original
+*/json
 seeks/seeks-0.4.0
 seeks/seeks-0.4.0.tar.gz

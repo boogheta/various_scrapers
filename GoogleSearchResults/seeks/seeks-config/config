@@ -1046,7 +1046,7 @@ buffer-limit 4096
 #        forward  <[2-3][0-9a-f][0-9a-f][0-9a-f]:*>   .
 #
 
-forward / proxy.medialab.sciences-po.fr:3128
+forward / proxy.host.example.fr:3128
 
 #
 #  5.2. forward-socks4, forward-socks4a and forward-socks5

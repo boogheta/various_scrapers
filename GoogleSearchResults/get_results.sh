@@ -4,6 +4,7 @@
 # Defaults to 100 results on http://localhost:8080 and on lang en
 
 list=$1
+dir=$(echo $list | sed 's/\..\{1,4\}$//')
 n_results=100
 lang="en"
 seeknode="http://localhost:8080"
@@ -40,10 +41,10 @@ fi
 
 
 if [ ! -f "$list.left" ]; then
-  sed 's/\r//g' $list > $list.original
+  sed 's/\r//g' $list | sed 's/\s\+/ /g' | sed 's/\s\+$//' | sed 's/^\s\+//' > $list.original
   cp $list.{original,left}
 fi
-mkdir -p json
+mkdir -p $dir/json
 touch $list.done
 
 cat $list.left | while read line; do
@@ -52,8 +53,8 @@ cat $list.left | while read line; do
   filename=`echo $line | sed 's/[^a-z0-9]//ig'`
   for page in `seq $totalpages`; do
     echo " page $(($page))"
-    curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&lang=$lang&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > json/$filename-$page.json
-    res=`grep '{"id":' json/$filename-$page.json | wc -l`
+    curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&lang=$lang&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > $dir/json/$filename-$page.json
+    res=`grep '{"id":' $dir/json/$filename-$page.json | wc -l`
     if [ $res -lt 1 ]; then
       if [ $page -eq 1 ]; then
         echo "WARNING: Google limit reached, please open a Google searchpage in a browser using proxy.medialab.sciences-po.fr:3128 as proxy and run captcha:"
@@ -66,11 +67,11 @@ cat $list.left | while read line; do
     if [ $res -lt 85 ]; then
       break
     fi
-    sec=$((10 + $RANDOM % 11))
+    sec=$((15 + $RANDOM % 16))
     usec=$(($RANDOM % 10))
     sleep $sec.$usec
   done
-  res=`grep '{"id":' json/$filename-*.json | wc -l`
+  res=`grep '{"id":' $dir/json/$filename-*.json | wc -l`
   echo "  -> $res results collected"
   echo $line >> $list.done
   grep -v "$line" $list.left > $list.todo
@@ -79,8 +80,11 @@ done
 
 if [ $(diff $list.done $list.original | wc -l) -eq 0 ]; then
   echo "All keywords searched and finished"
-  echo "Results in json/"
+  echo "Results in $dir/"
   rm $list.done $list.original $list.left
+  mv $list $dir/0-keywords-$list
+  bash make_csv_from_json_results_dir.sh $dir
+  ls $dir
 else
   echo "Data collection is not finished"
   echo "Please restart script"
