@@ -64,12 +64,12 @@ cat $list.left | while read line; do
       fi
       break
     fi
-    if [ $res -lt 85 ]; then
-      break
-    fi
     sec=$((15 + $RANDOM % 16))
     usec=$(($RANDOM % 10))
     sleep $sec.$usec
+    if [ $res -lt 85 ]; then
+      break
+    fi
   done
   res=`grep '{"id":' $dir/json/$filename-*.json | wc -l`
   echo "  -> $res results collected"
