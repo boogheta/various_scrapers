@@ -52,6 +52,9 @@ cat $list.left | while read line; do
   keyword=`echo $line | sed 's/ /+/g' | sed 's/"/%22/g'`
   filename=`echo $line | sed 's/[^a-z0-9]//ig'`
   for page in `seq $totalpages`; do
+    sec=$((15 + $RANDOM % 16))
+    usec=$(($RANDOM % 10))
+    sleep $sec.$usec
     echo " page $(($page))"
     curl -sL "$seeknode/search?output=json&rpp=100&page=$page&expansion=$expansion&prs=off&lang=$lang&q=$keyword" | sed 's/\(},\|\[\){/\1\n{/g' > $dir/json/$filename-$page.json
     res=`grep '{"id":' $dir/json/$filename-$page.json | wc -l`
@@ -64,10 +67,7 @@ cat $list.left | while read line; do
       fi
       break
     fi
-    sec=$((15 + $RANDOM % 16))
-    usec=$(($RANDOM % 10))
-    sleep $sec.$usec
-    if [ $res -lt 85 ]; then
+    if [ $res -lt 75 ]; then
       break
     fi
   done
@@ -82,7 +82,7 @@ if [ $(diff $list.done $list.original | wc -l) -eq 0 ]; then
   echo "All keywords searched and finished"
   echo "Results in $dir/"
   rm $list.done $list.original $list.left
-  mv $list $dir/0-keywords-$list
+  mv $list $dir/0-keywords.txt
   bash make_csv_from_json_results_dir.sh $dir
   ls $dir
 else
