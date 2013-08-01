@@ -30,7 +30,6 @@ while getattr(page, 'http_status', 0) != 200 and ct < 10:
     except ghostTimeoutError:
         pass
     ct += 1
-print "DONE"
 html_text = ghost.content
 del ghost
 
