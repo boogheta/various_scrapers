@@ -37,9 +37,9 @@ if [ "$ext" == "pdf" ]; then
     fi
     wget "$url" --dns-timeout 30 --connect-timeout 60 --read-timeout 300 -q -O "$dir/html-pdf/$md5.$ext"
   done
-  pdftotext -nopgbrk "$dir/html-pdf/$md5.$ext" "$dir/txt/$md5.txt" 2>> "$dir/5-extraction-errors.log"
-  cp "$dir/txt/$md5.txt" "$dir/txt-canola/$md5.txt"
-  mv "$dir/txt/$md5.txt" "$dir/txt-num/$md5.txt"
+  pdftotext -nopgbrk "$dir/html-pdf/$md5.$ext" "$dir/txt-raw/$md5.txt" 2>> "$dir/5-extraction-errors.log"
+  cp "$dir/txt-raw/$md5.txt" "$dir/txt-canola/$md5.txt"
+  cp "$dir/txt-raw/$md5.txt" "$dir/txt-num/$md5.txt"
 else
   touch "$dir/html-pdf/$md5.$ext" "$dir/txt-canola/$md5.txt" "$dir/txt-num/$md5.txt" "$dir/txt-raw/$md5.txt"
   source /usr/local/bin/virtualenvwrapper.sh
