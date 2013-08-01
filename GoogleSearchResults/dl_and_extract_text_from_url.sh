@@ -17,7 +17,7 @@ if [ -z "$ext" ]; then
   fi
 fi
 
-mkdir -p "$dir/html-pdf" "$dir/txt-canola" "$dir/txt-num" "$dir/txt-raw"
+mkdir -p "$dir/html-pdf" "$dir/txt" "$dir/txt-canola" "$dir/txt-num" "$dir/txt-raw"
 
 ct=0
 if [ "$ext" == "pdf" ]; then

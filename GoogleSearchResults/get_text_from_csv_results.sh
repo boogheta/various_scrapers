@@ -1,8 +1,14 @@
 #!/bin/bash
 
 dir=$(echo "$1" | sed 's#/$##')
-    rm -rf "$dir/html-pdf" "$dir/txt-canola" "$dir/txt-num" "$dir/3-results-urls-md5.csv" "$dir/4-download-errors.log" "$dir/5-extraction-errors.log"
-    mkdir -p "$dir/html-pdf" "$dir/txt"
+
+if test -z "$dir" || ! test -d "$dir" ; then
+  echo "USAGE : bash get_text_from_csv_results.sh <GOOGLE_RESULTS_DIR>"
+  echo "Please input a valid path for <GOOGLE_RESULTS_DIR>"
+  exit 1
+fi
+
+rm -rf "$dir/html-pdf" "$dir/txt*" "$dir/3-results-urls-md5.csv" "$dir/4-download-errors.log" "$dir/5-extraction-errors.log"
 echo "url,md5" > "$dir/3-results-urls-md5.csv"
 
 cat "$dir/2-results-urls.csv" | while read url; do
