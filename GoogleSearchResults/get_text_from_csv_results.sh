@@ -8,23 +8,27 @@ if test -z "$dir" || ! test -d "$dir" ; then
   exit 1
 fi
 
-rm -rf "$dir/html-pdf" "$dir/txt*" "$dir/3-results-urls-md5.csv" "$dir/4-download-errors.log" "$dir/5-extraction-errors.log"
-echo "url,md5" > "$dir/3-results-urls-md5.csv"
+rm -rf "$dir/html-pdf" "$dir/txt" "$dir/txt-canola" "$dir/txt-raw" "$dir/3-results-urls-md5.csv" "$dir/4-download-errors.log" "$dir/5-extraction-errors.log" "$dir/6-corpus_results_text_raw.csv" "$dir/7-corpus_results_text_canola.csv"
+echo "url,format,md5" > "$dir/3-results-urls-md5.csv"
+echo "url,keywords,format,text" > "$dir/6-corpus_results_text_raw.csv"
+echo "url,keywords,format,text" > "$dir/7-corpus_results_text_canola.csv"
 
 cat "$dir/2-results-urls.csv" | while read url; do
-  md5=$(echo $url | md5sum | sed 's/\s\+.*$//')
-  ext=$(echo "$url" | sed 's/^.*\(....\)/\1/')
-  if [ "$ext" == ".pdf" ]; then
-    ext="pdf"
-  else
-    ext="html"
-  fi
-  echo `date`": $url;$ext;$md5" >> "$dir/3-results-urls-md5.csv"
-  echo "$url -> html/$md5.$ext - txt/$md5.txt"
-  while [ $(pgrep -fc dl_and_extract_text_from_url.sh) -gt 10 ]; do
+  md5=$(echo "$url" | md5sum | sed 's/\s\+.*$//')
+  ext=$(echo "$url" | sed 's/^.*\.\(.\{3,4\}\)$/\1/' | sed 's/^http.*$/html/' | sed 's/[^a-z0-9]//ig')
+  echo "$url;$ext;$md5" >> "$dir/3-results-urls-md5.csv"
+  echo `date`": $url -> $md5 / $ext"
+  while [ $(pgrep -fc "python ghost_download.py") -gt 20 ]; do
+    ps -e -o time,pid,command | grep ghost_download | sort -r | while read line; do
+      proctime=$(echo $line | sed 's/^\(..\):\(..\).*$/\1\2/')
+      if [ "$proctime" -gt 30 ]; then
+        kill $process
+      fi
+      process=$(echo $line | awk -F " " '{print $2}')
+    done
     sleep 1
   done
-  bash "dl_and_extract_text_from_url.sh" "$url" "$dir" "$md5" "$ext" &
+  bash "dl_and_extract_text_from_url.sh" "$url" "$dir" &
   sleep 0.5
 done
 
