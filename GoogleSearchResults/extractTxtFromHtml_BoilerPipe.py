@@ -100,7 +100,7 @@ try:
     text = re_clean_javascript.sub(' ', text)
     text = re_clean_style.sub(' ', text)
     text = re_clean_balises.sub(' ', text)
-    text = re_clean_blanks.sub(' ', text)
+    text = re_clean_blanks.sub(' ', text).strip()
     pass
 except:
     pass
