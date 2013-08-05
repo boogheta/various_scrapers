@@ -91,7 +91,7 @@ def unescape(s):
 re_clean_comments = re.compile(r'<!--.*?-->', re.I)
 re_clean_javascript = re.compile(r'<script[^>]*/?>.*?</script>', re.I)
 re_clean_style = re.compile(r'<style[^>]*/?>.*?</style>', re.I)
-re_clean_balises = re.compile(r'<[/!]?[a-z0-9\-]+[^>]*>', re.I)
+re_clean_balises = re.compile(r'<[/!]?\[?[a-z0-9\-]+[^>]*>', re.I)
 re_clean_blanks = re.compile(r'[\s]+')
 try:
     text = unescape(text)

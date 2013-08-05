@@ -36,18 +36,6 @@ elif [ "$contenttype" != "application" ]; then
   deactivate
 fi
 
-keywords=$(grep ",\"$url\"," "$dir/1-results.csv" | sed 's/","http.*$//i' | sed 's/^"//' | tr '\n' '|' | sed 's/|$//')
-textraw=""
-if [ -f "$dir/txt-raw/$md5.txt" ]; then
-  textraw=$(cat "$dir/txt-raw/$md5.txt" | tr '\n' ' ' | sed 's/"/""/g' | sed 's/\(\n\|\r\|\t\|\s\)\+/ /g' | sed 's/^\s\+//' | sed 's/\s\+$//')
-fi
-echo "\"$url\",\"$keywords\",\"$ext\",\"$textraw\"" >> "$dir/6-corpus_results_text_raw.csv"
-textcanola=""
-if [ -f "$dir/txt-canola/$md5.txt" ]; then
-  textcanola=$(cat "$dir/txt-canola/$md5.txt" | tr '\n' ' ' | sed 's/"/""/g' | sed 's/\(\n\|\r\|\t\|\s\)\+/ /g' | sed 's/^\s\+//' | sed 's/\s\+$//')
-fi
-echo "\"$url\",\"$keywords\",\"$ext\",\"$textcanola\"" >> "$dir/7-corpus_results_text_canola.csv"
-
 
 
 #  python extractTxtFromHtml_BoilerPy.py "$dir/html-pdf/$md5.$ext" "CANOLA_EXTRACTOR" > "$dir/txt-canola/$md5.txt" 2>> "$dir/5-extraction-errors.log"

@@ -8,10 +8,8 @@ if test -z "$dir" || ! test -d "$dir" ; then
   exit 1
 fi
 
-rm -rf "$dir/html-pdf" "$dir/txt" "$dir/txt-canola" "$dir/txt-raw" "$dir/3-results-urls-md5.csv" "$dir/4-download-errors.log" "$dir/5-extraction-errors.log" "$dir/6-corpus_results_text_raw.csv" "$dir/7-corpus_results_text_canola.csv"
+rm -rf "$dir/html-pdf" "$dir/txt" "$dir/txt-canola" "$dir/txt-raw" "$dir/3-results-urls-md5.csv" "$dir/4-download-errors.log" "$dir/5-extraction-errors.log"
 echo "url,format,md5" > "$dir/3-results-urls-md5.csv"
-echo "url,keywords,format,text" > "$dir/6-corpus_results_text_raw.csv"
-echo "url,keywords,format,text" > "$dir/7-corpus_results_text_canola.csv"
 
 cat "$dir/2-results-urls.csv" | while read url; do
   md5=$(echo "$url" | md5sum | sed 's/\s\+.*$//')
@@ -21,10 +19,10 @@ cat "$dir/2-results-urls.csv" | while read url; do
   while [ $(pgrep -fc "python ghost_download.py") -gt 20 ]; do
     ps -e -o time,pid,command | grep ghost_download | sort -r | while read line; do
       proctime=$(echo $line | sed 's/^\(..\):\(..\).*$/\1\2/')
-      if [ "$proctime" -gt 30 ]; then
+      if [ "$proctime" -gt 45 ]; then
+        process=$(echo $line | awk -F " " '{print $2}')
         kill $process
       fi
-      process=$(echo $line | awk -F " " '{print $2}')
     done
     sleep 1
   done
