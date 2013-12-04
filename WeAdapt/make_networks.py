@@ -190,7 +190,6 @@ for op in orgas_places.itervalues():
     add_edge_weight(G6, 'o%s'%op['organisation_id'], placemarks[int(op['placemark_id'])]['country'])
 for n in G6.nodes():
     edges = G6.out_edges(n) + G6.in_edges(n)
-    print n, edges
     if G6.node[n]['type_node'] == 'organisation' and not len(edges):
         G6.remove_node(n)
 write_graph_in_format(G6, "weadapt-bi-orgas-countries_projects")
