@@ -3,3 +3,4 @@
 *.gexf
 *.csv
 *.tar.gz
+*.pyc

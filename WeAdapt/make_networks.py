@@ -11,7 +11,7 @@ def write_graph_in_format(graph, filename, fileformat='gexf') :
         json.dump(json_graph.node_link_data(graph), open(filename+".json",'w'))
     else :
         nx.write_gexf(graph, filename+".gexf")
- 
+
 def add_edge_weight(graph, node1, node2):
     if graph.has_edge(node1, node2):
         graph[node1][node2]['weight'] += 1
@@ -32,10 +32,10 @@ from json_to_sql import *
 with open('placemarks_coords.csv', 'rb') as places_coords_file:
     try:
         for row in csv.DictReader(places_coords_file):
-            placemarks[int(row['placemark_id'])]['country'] = row['country']
+            placemarks[str(row['placemark_id'])] = row['country']
     except Exception as e:
         print "Problem reading placemarks_coords.csv :"
-        print e
+        raise e
 
 # Prepare nodes
 def add_org_nodes(graph):
@@ -59,10 +59,10 @@ def add_tag_nodes(graph):
 
 def add_country_nodes(graph):
     for pm in placemarks.itervalues():
-        if graph.has_node(pm['country']):
-            graph.node[pm['country']]['nb_projects'] += 1
+        if graph.has_node(pm):
+            graph.node[pm]['nb_projects'] += 1
         else:
-            graph.add_node(pm['country'], nb_projects=1, type_node='country')
+            graph.add_node(pm, nb_projects=1, type_node='country')
 
 #G = nx.Graph()
 #add_country_nodes(G)
@@ -111,7 +111,7 @@ for orgs in porgs.itervalues():
             add_edge_weight(G1, co, o2)
 write_graph_in_format(G1, "weadapt-mono-orgas_projects")
 
-## Mono tag --pm--> tag 
+## Mono tag --pm--> tag
 G2 = nx.Graph()
 add_tag_nodes(G2)
 clean_empty_nodes(G2, 'nb_projects')
@@ -136,7 +136,7 @@ clean_unused(G3, 'tag', 'nb_projects', 2)
 for pt in places_tags.itervalues():
     tid = 't%s'%pt['tag_id']
     if G3.has_node(tid):
-        add_edge_weight(G3, placemarks[pt['placemark_id']]['country'], tid)
+        add_edge_weight(G3, placemarks[str(pt['placemark_id'])], tid)
 write_graph_in_format(G3, "weadapt-bi-countries-tags_projects")
 
 ## Bipa orga ----> tag (>1)
@@ -187,7 +187,7 @@ G6 = nx.DiGraph()
 add_country_nodes(G6)
 add_org_nodes(G6)
 for op in orgas_places.itervalues():
-    add_edge_weight(G6, 'o%s'%op['organisation_id'], placemarks[op['placemark_id']]['country'])
+    add_edge_weight(G6, 'o%s'%op['organisation_id'], placemarks[str(op['placemark_id'])])
 for n in G6.nodes():
     edges = G6.out_edges(n) + G6.in_edges(n)
     print n, edges
