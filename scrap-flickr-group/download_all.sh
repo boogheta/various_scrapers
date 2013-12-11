@@ -48,12 +48,22 @@ fi
 mkdir -p data/users
 mongoexport --db flickr --collection photos --csv -f "owner" | sort -u | sed 's/"//g' | grep -v '^owner' > list_users.csv
 for user in $(cat list_users.csv); do
-  run=true
   if test -s "data/users/$user.json" && grep "username" "data/users/$user.json" > /dev/null; then
-    run=false
+    continue
   fi
-  if $run; then
+  ct=0
+  retry=true
+  while $retry && [ $ct -lt 3 ] ; do
+    sleep 1
+    echo "get user $user"
     $callflickr -d method=flickr.people.getInfo -d user_id="$user" > "data/users/$user.json"
+    if [ $? -eq 0 ]; then
+      retry=false
+    fi
+    ct=$(($ct + 1))
+  done
+  if $retry ; then
+    echo "    !!WARNING GOT NO RESULT ON QUERY for user $user !!" >> errors.txt
   fi
 done
 
