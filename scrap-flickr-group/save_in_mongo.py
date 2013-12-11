@@ -6,7 +6,7 @@ import simplejson as json
 with open(sys.argv[1], "r") as f:
     data = json.load(f)
 
-group = sys.argv[2]
+group = sys.argv[2] if len(sys.argv) > 2 else None
 
 db = pymongo.Connection("localhost", 27017)["flickr"]
 
@@ -14,6 +14,12 @@ if "metas" in sys.argv[1]:
     metas = data['group']
     metas['_id'] = group
     db['groups'].save(metas)
+
+elif "person" in data:
+    user = data['people']
+    user['_id'] = data['id']
+    db['users'].save(user)
+
 else:
     for photo in data['photos']['photo']:
         photo['_id'] = "%s/%s" % (photo['owner'], photo['id'])

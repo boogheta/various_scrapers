@@ -37,7 +37,7 @@ if [ -z $1 ]; then
   for id in $(ls data); do
     for file in $(ls data/$id | grep json); do
       echo "$id/$file";
-      python save_in_mongo.py data/$id/$file $id;
+      python save_in_mongo.py data/$id/$file $id
     done
   done
 
@@ -55,6 +55,11 @@ for user in $(cat list_users.csv); do
   if $run; then
     $callflickr -d method=flickr.people.getInfo -d user_id="$user" > "data/users/$user.json"
   fi
+done
+
+#Save in mongo:
+for user in $(cat list_users.csv); do
+  python save_in_mongo.py data/users/$user.json
 done
 
 # Scrap from FlickR's webpages special object tags missing from API
