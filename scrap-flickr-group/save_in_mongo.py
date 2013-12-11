@@ -16,7 +16,7 @@ if "metas" in sys.argv[1]:
     db['groups'].save(metas)
 
 elif "person" in data:
-    user = data['people']
+    user = data['person']
     user['_id'] = data['id']
     db['users'].save(user)
 
