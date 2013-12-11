@@ -17,10 +17,10 @@ if "metas" in sys.argv[1]:
 
 elif "person" in data:
     user = data['person']
-    user['_id'] = data['id']
+    user['_id'] = user['id']
     db['users'].save(user)
 
-else:
+elif "photos" in data:
     for photo in data['photos']['photo']:
         photo['_id'] = "%s/%s" % (photo['owner'], photo['id'])
         old = db['photos'].find_one({'_id': photo['_id']})
@@ -32,3 +32,5 @@ else:
             photo['groups'].append(group)
         db['photos'].update({'_id': photo['_id']}, photo, upsert=True)
 
+else:
+    print "Couldn't identify what kind of data this file is : %s" % sys.argv[1]
