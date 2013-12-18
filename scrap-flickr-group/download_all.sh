@@ -100,9 +100,19 @@ done
 # Extract note-wrap tags from the webpages and add to photo's metas in mongo
 for id in $(cat list_photos.csv); do 
   cleanid=$(echo $id | sed 's/\W/-/g')
-  cat "data/photos/$cleanid.html" | tr '\n' ' ' | sed 's/\(<\/\?span\)/\n\1/g' | grep '<span class="note-wrap' | sed 's/<[^>]\+>//g' > temp_tags.txt
+  cat "data/photos/$cleanid.html" |
+    tr '\n' ' ' |
+    sed 's/\(<\/\?u\?li\?\)/\n\1/g' |
+    grep '<span class="note-wrap' |
+    sed 's/^.*style="left://' |
+    sed 's/px;\s*\(top\|width\|height\):/,/g' |
+    sed 's/px;"><span.*note-wrap">/,/' |
+    sed 's/<\/span>.*$//' > temp_tags.txt
+  #cat "data/photos/$cleanid.html" | tr '\n' ' ' | sed 's/\(<\/\?span\)/\n\1/g' | grep '<span class="note-wrap' | sed 's/<[^>]\+>//g' > temp_tags.txt
   if grep "." temp_tags.txt > /dev/null; then
     python add_extra_tags.py "$id" temp_tags.txt
   fi
 done
+
+
 
