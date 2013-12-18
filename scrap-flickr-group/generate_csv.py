@@ -103,7 +103,10 @@ for user in db['users'].find():
         u['location'] = user['location']['_content']
     except:
         u['location'] = ''
-    u['description'] = user['description']['_content']
+    try:
+        u['description'] = user['description']['_content'].replace('\n', ' ')
+    except:
+        u['description'] = ''
     u['nb_photos'] = user['photos']['count']['_content']
     try:
         u['firstdate'] = user['photos']['firstdatetaken']['_content'][:10]
@@ -133,7 +136,10 @@ for group in db['users'].find():
     except:
         g['name'] = ''
     g['url'] = "https://secure.flickr.com/groups/%s/pool/" % group['id']
-    g['description'] = group['description']['_content']
+    try:
+        g['description'] = group['description']['_content'].replace('\n', ' ')
+    except:
+        g['description'] = ''
     try:
         g['nb_users'] = group['members']['_content']
     except:
