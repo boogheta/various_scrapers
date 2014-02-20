@@ -2,7 +2,9 @@
 # BOILER PY #
 #############
 
-v.mk boilerpy
+source $(which virtualenvwrapper.sh)
+
+workon boilerpy
 
 #BoilerPy
 #pip install git+https://github.com/Yomguithereal/BoilerPy.git
@@ -13,12 +15,15 @@ cd python-boilerpipe
 unzip jpype.zip
 cd JPype-0.5.4.2/
 #Get JAVA_HOME
-a=`which java`; while ls -l "$a" | grep '\->' > /dev/null; do a=$(ls -l $a | sed 's/^.*->\s*//ig'); done; JAVA_HOME=$(echo $a | sed 's#/bin/java$##')
-#sudo echo "JAVA_HOME=$JAVA_HOME" >> /etc/environment
-vim setup.pyi +47 # set JAVA_HOME properly
+javahome=`which java`; while ls -l "$a" | grep '\->' > /dev/null; do a=$(ls -l $a | sed 's/^.*->\s*//ig'); done; JAVA_HOME=$(echo $a | sed 's#/bin/java$##')
+sed "s#/usr/lib/jvm/java-1.5.0-sun-1.5.0.08#$javahome#g" setup.py > setup.py.new
+mv setup.py{.new,}
 python setup.py build
 python setup.py install
-vim $PYENVS/boilerpy/lib/python2.7/site-packages/jpype/_linux.py +53 # set JAVA_HOME properly
+cdvirtualenv
+sed "s#/usr/lib/jvm/java-1.5.0-sun-1.5.0.08#$javahome#g" lib/python2.7/site-packages/jpype/_linux.py > lib/python2.7/site-packages/jpype/_linux.py.new
+mv lib/python2.7/site-packages/jpype/_linux.py{.new,}
+cd -
 cd ..
 python setup.py build
 python setup.py install
