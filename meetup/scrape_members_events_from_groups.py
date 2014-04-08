@@ -43,8 +43,12 @@ def download_page(url):
 
 def download_json(url):
     content, new = download_page(url)
-    res = json.loads(content)
-    if new and not 'problem' in res:
+    try:
+        res = json.loads(content)
+    except Exception as e:
+        print >> sys.stderr, "[ERROR] JSON badly formatted %s: %s" % (url, content)
+        res = {}
+    if new and res and not 'problem' in res:
         print >> sys.stderr, "[DEBUG] Downloaded and cached %s" % url
     return res
 
@@ -92,12 +96,12 @@ def get_api_results(method, group, dico):
                 if el['id'] not in queriedmembers:
                     member_url = api_url % "groups" + "member_id=%s" % el['id']
                     membergroups = download_json(member_url)
-                    if 'results' in membergroups:
-                        el['groups'] = [int(g['id']) for g in membergroups['results']]
-                    else:
+                    if not 'results' in membergroups:
                         os.remove(escape_url(member_url))
                         if membergroups['code'] != "not_authorized":
                             print >> sys.stderr, "[WARNING] Error while downloading %s:" % member_url, membergroups
+                    else:
+                        el['groups'] = [int(g['id']) for g in membergroups['results']]
                 if group['id'] not in el:
                     el['groups'].append(group['id'])
     group[method] = ids
