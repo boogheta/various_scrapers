@@ -98,7 +98,7 @@ def get_api_results(method, group, dico):
                     membergroups = download_json(member_url)
                     if not 'results' in membergroups:
                         os.remove(escape_url(member_url))
-                        if membergroups['code'] != "not_authorized":
+                        if 'code' in membergroups and membergroups['code'] != "not_authorized":
                             print >> sys.stderr, "[WARNING] Error while downloading %s:" % member_url, membergroups
                     else:
                         el['groups'] = [int(g['id']) for g in membergroups['results']]
