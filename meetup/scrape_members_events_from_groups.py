@@ -9,7 +9,9 @@ import json, yaml
 from pymongo import Connection
 import time
 
-db = Connection()['meetup']
+mongo = Connection()
+mongo.drop_database('meetup')
+db = mongo['meetup']
 
 users = {}
 events = {}
