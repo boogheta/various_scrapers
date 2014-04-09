@@ -50,6 +50,9 @@ def download_json(url):
         res = {}
     if new and res and not 'problem' in res:
         print >> sys.stderr, "[DEBUG] Downloaded and cached %s" % url
+    if "metas" in res and "next" in res['metas'] and res['metas']['next']:
+        more = download_json(res['metas']['next'])
+        res['results'] += more['results']
     return res
 
 re_member_ids = re.compile(r'/members/(\d+)[\'"\\]')
