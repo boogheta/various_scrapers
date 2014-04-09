@@ -50,8 +50,8 @@ def download_json(url):
         res = {}
     if new and res and not 'problem' in res:
         print >> sys.stderr, "[DEBUG] Downloaded and cached %s" % url
-    if "metas" in res and "next" in res['metas'] and res['metas']['next']:
-        more = download_json(res['metas']['next'])
+    if "meta" in res and "next" in res['meta'] and res['meta']['next']:
+        more = download_json(res['meta']['next'])
         res['results'] += more['results']
     return res
 
