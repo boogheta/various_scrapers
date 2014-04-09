@@ -46,7 +46,7 @@ def download_json(url):
     try:
         res = json.loads(content)
     except Exception as e:
-        print >> sys.stderr, "[ERROR] JSON badly formatted %s: %s" % (url, content)
+        print >> sys.stderr, "[ERROR] JSON badly formatted %s: %s" % (url, content.encode('utf-8'))
         res = {}
     if new and res and not 'problem' in res:
         print >> sys.stderr, "[DEBUG] Downloaded and cached %s" % url
@@ -107,7 +107,7 @@ def get_api_results(method, group, dico):
     group[method] = ids
 
 for group in groups:
-    print "[INFO] * Query %s %s " % (group['name'], group['link'])
+    print "[INFO] * Query %s %s " % (group['name'].encode('utf-8'), group['link'].encode('utf-8'))
     # Get group users
     get_api_results("members", group, users)
     # Get group events
