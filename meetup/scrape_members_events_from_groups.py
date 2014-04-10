@@ -51,8 +51,14 @@ def download_json(url):
     if new and res and not 'problem' in res:
         print >> sys.stderr, "[DEBUG] Downloaded and cached %s" % url
     if "meta" in res and "next" in res['meta'] and res['meta']['next']:
-        more = download_json(res['meta']['next'])
-        res['results'] += more['results']
+        next_url = res['meta']['next']
+        more = download_json(next_url)
+        if not 'results' in more:
+            print >> sys.stderr, "[WARNING] Error while downloading %s:" % next_url
+            os.remove(escape_url(next_url))
+            time.sleep(1)
+        else:
+            res['results'] += more['results']
     return res
 
 re_member_ids = re.compile(r'/members/(\d+)[\'"\\]')
