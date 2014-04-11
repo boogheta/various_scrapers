@@ -122,25 +122,25 @@ if __name__ == "__main__":
     print "CREATE TABLE placemark_tag (id VARCHAR(16), placemark_id BIGINT, tag_id BIGINT, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = MyISAM;"
     print "ALTER TABLE placemark_tag ADD CONSTRAINT pmtag_placemark_id FOREIGN KEY (placemark_id) REFERENCES placemark(id);"
     print "ALTER TABLE placemark_tag ADD CONSTRAINT pmtag_tag_id FOREIGN KEY (tag_id) REFERENCES tag(id);"
-    
+
     def cleantxt(txt):
         txt = txt.encode('utf-8')
         txt = txt.replace("'", "\\'")
         return txt
-    
+
     def nullify(txt):
         if (txt == ""):
             return "NULL"
         return "'%s'" % txt
-    
+
     for _, org in tags.iteritems():
-        print "INSERT INTO tag (id, tag) VALUES ('%s', '%s');" % (org['id'], cleantxt(org['tag']))
+        print "INSERT INTO tag (id, tag) VALUES ('%s', \"%s\");" % (org['id'], cleantxt(org['tag']))
     for _, org in placemarks.iteritems():
-        print "INSERT INTO placemark (id, name, url, latitude, longitude) VALUES ('%s', '%s', '%s', '%s', '%s');" % (org['id'], cleantxt(org['name']), org['url'], org['latitude'], org['longitude'])
+        print "INSERT INTO placemark (id, name, url, latitude, longitude) VALUES ('%s', \"%s\", '%s', '%s', '%s');" % (org['id'], cleantxt(org['name']), org['url'], org['latitude'], org['longitude'])
     for _, org in organisations.iteritems():
-            print "INSERT INTO organisation (id, name, url) VALUES ('%s', '%s', '%s');" % (org['id'], cleantxt(org['name']), org['url'])
+            print "INSERT INTO organisation (id, name, url) VALUES ('%s', \"%s\", '%s');" % (org['id'], cleantxt(org['name']), org['url'])
     for _, org in authors.iteritems():
-        print "INSERT INTO author (id, name, organisation_id) VALUES ('%s', '%s', %s);" % (org['id'], cleantxt(org['name']), nullify(org['organisation_id']))
+        print "INSERT INTO author (id, name, organisation_id) VALUES ('%s', \"%s\", %s);" % (org['id'], cleantxt(org['name']), nullify(org['organisation_id']))
     for _, org in orgas_places.iteritems():
         print "INSERT INTO organisation_placemark (id, organisation_id, placemark_id) VALUES ('%s', '%s', '%s');" % (org['id'], org['organisation_id'], org['placemark_id'])
     for _, org in orgas_tags.iteritems():
@@ -149,5 +149,5 @@ if __name__ == "__main__":
         print "INSERT INTO placemark_author (id, placemark_id, author_id) VALUES ('%s', '%s', '%s');" % (org['id'], org['placemark_id'], org['author_id'])
     for _, org in places_tags.iteritems():
         print "INSERT INTO placemark_tag (id, placemark_id, tag_id) VALUES ('%s', '%s', '%s');" % (org['id'], org['placemark_id'], org['tag_id'])
-    
-    
+
+
