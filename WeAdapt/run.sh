@@ -3,9 +3,11 @@
 source $(which virtualenvwrapper.sh)
 workon test
 
-echo "Downloading source json from WeAdapt's API..."
-curl "http://api.weadapt.org/v1/placemarks/list" > placemarks.json
-curl "http://api.weadapt.org/v1/organisations/list" > organisations.json
+if [ -z $1 ]; then
+  echo "Downloading source json from WeAdapt's API..."
+  curl "http://api.weadapt.org/v1/placemarks/list" > placemarks.json
+  curl "http://api.weadapt.org/v1/organisations/list" > organisations.json
+fi
 echo "Converting to sql..."
 python json_to_sql.py > orgas-places.sql
 echo "Saving to local MySQL..."
