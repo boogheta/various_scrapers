@@ -44,7 +44,12 @@ with open("events.csv", "w") as f:
     for e in db['events'].find():
         event = fill_same_fields(e, fields)
         if 'venue' in e:
-            event.update(fill_same_fields(e['venue'], fields))
+            if 'city' in e['venue'] and e['venue']['city']:
+                event['city'] = e['venue']['city']
+            if 'state' in e['venue'] and e['venue']['state']:
+                event['US_state'] = e['venue']['state']
+            if 'country' in e['venue'] and e['venue']['country']:
+                event['country'] = e['venue']['country']
             event['location_name'] = e['venue']['name']
             event['location_coordinates'] = "%s,%s" % (e['venue']['lat'], e['venue']['lon'])
         elif 'how_to_find_us' in e:
