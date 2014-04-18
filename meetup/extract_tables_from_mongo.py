@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
+import re, time
 from datetime import datetime
 from pymongo import Connection
 db = Connection()['meetup']
@@ -58,7 +58,7 @@ with open("events.csv", "w") as f:
             event['nb_ratings'] = e['rating']['count']
         print >> f, format_csv_dico(event, fields)
         if e['group'] not in groups:
-            groups[e['group']] = 0
+            groups[e['group']] = int(time.time())*1000
         groups[e['group']] = min(groups[e['group']], e['created'])
         for u in e['members']:
             if u not in users:
@@ -74,7 +74,8 @@ with open("groups.csv", "w") as f:
     print >> f, header
     for g in db['groups'].find():
         group = fill_same_fields(g, fields)
-        group['first_date'] = format_date(groups.get(g['id'], 0))
+        last_update = datetime.strptime(g['updated'][12:31], '%Y-%m-%dT%H:%M:%S').timetuple()
+        group['first_date'] = format_date(groups.get(g['id'], time.mktime(last_update)*1000))
         group['nb_public_members'] = len(g['members'])
         group['nb_public_events'] = len(g['events'])
         group['list_events_ids'] = joinints(g['events'])
