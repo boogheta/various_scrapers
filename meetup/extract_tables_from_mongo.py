@@ -10,7 +10,7 @@ def joinints(arr):
     return '|'.join([str(el) for el in arr])
 
 def format_csv_arr(arr):
-    return ','.join([e.strip() for e in ['"%s"' % el.replace('"', '""') if ',' in el else el for el in arr]])
+    return ','.join([e.strip() for e in ['"%s"' % el.replace('"', '""') if ',' in el or '"' in el else el for el in arr]])
 
 def format_csv_dico(dico, fields):
     arr = [dico[field].encode('utf-8') if type(dico[field]) is unicode else str(dico[field]) for field in fields]
@@ -67,7 +67,7 @@ with open("events.csv", "w") as f:
 
 
 # Write groups table
-# GROUP ID (groupe meetup / nom) ; Ville du groupe, éventuellement code région pr USA (pas nécessairement indiquée ds le nom) ; Texte de présentation du groupe local ; Date de création du meetup ; Nombre de "Self Quantifiers" affiché ; Nombres d'évaluations du groupe ; Nombre de meetups passés ; Liste des évènements organisés (par ID ou par nom ?) ; Noms des organisateurs (ou ID des organisateurs) ; Tags "A propos de nous" (décrivant les thématiques d'inscription du meetup) ; Sponsors du groupe (facultatif)
+# GROUP ID (groupe meetup / nom) ; Ville du groupe, éventuellement code région pr USA (pas nécessairement indiquée ds le nom) ; Texte de présentation du groupe local ; Date de création du meetup ; Nombre de "Self Quantifiers" affiché ; Nombres d'évaluations du groupe ; Nombre de meetups passés ; Liste des évènements organisés (par ID ou par nom ?) ; Noms des orgaisateurs (ou ID des organisateurs) ; Tags "A propos de nous" (décrivant les thématiques d'inscription du meetup) ; Sponsors du groupe (facultatif)
 with open("groups.csv", "w") as f:
     header = 'id,name,city,US_state,country,first_date,description,nb_public_members,nb_public_events,list_events_ids,source_url'
     fields = header.split(',')
