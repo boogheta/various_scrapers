@@ -11,10 +11,6 @@ cat Oil_Gas_Russell_3000_2009-2014.csv  |
       echo "downloading $fid"
       curl -sL "http://www.climateriskdisclosure.org/api/climatedisclosure_medialab.php?filename=$fid" > "data/$fid.json"
     fi
-    cat "data/$fid.json" |
-      sed 's/$/,/' >> all_data.json.tmp
-  done
-head -n $(($(wc -l all_data.json.tmp) - 1)) all_data.json.tmp >> all_data.json
-tail -n 1 all_data.json.tmp | sed 's/,$//' >> all_data.json
-rm all_data.json.tmp
+    cat "data/$fid.json" | sed 's/$/,/'
+  done | sed 's/,$//' >> all_data.json
 echo "]" >> all_data.json
