@@ -23,7 +23,7 @@ fi
 cp "$gexffile"{,.tmp}
 cat "$labelsfile" | while read line; do
   id=$(echo $line | awk -F ',' '{print $1}' | sed 's#/#\\/#g')
-  label=$(echo $line | awk -F ',' '{print $2}' | sed 's#/#\\/#g' | sed 's/[\r\n]\+//g')
+  label=$(echo $line | awk -F ',' '{print $2}' | sed 's#/#\\/#g' | sed 's/[\r\n]\+//g' | sed 's/""/\\\&quot;/g' | sed 's/^"//' | sed 's/"$//')
   sed 's/ \(id\|source\|target\)="'"$id"'"/ \1="'"$label"'"/g' "$gexffile".tmp > "$gexffile".tmp2
   mv "$gexffile".tmp{2,}
 done
