@@ -36,10 +36,16 @@ def format_date(d):
         yr, mt, dy = extract_dat(now)
     else:
         dat = dat.replace("Le ", "")
-        dy, mon, yr = re_date.match(dat).groups()
-        mt = months[mon]
-    hr, mn = tim.replace("mn", "").split("h")
-    return datetime(int(yr), mt, int(dy), int(hr), int(mn)).isoformat()
+        try:
+            dy, mon, yr = re_date.match(dat).groups()
+            mt = months[mon]
+        except:
+            dy, mt, yr = dat.split("/")
+    try:
+        hr, mn = tim.replace("mn", "").split("h")
+    except:
+        hr, mn = tim.split(":")
+    return datetime(int(yr), int(mt), int(dy), int(hr), int(mn)).isoformat()
 
 # Collect threads list
 new_threads = 0
@@ -108,26 +114,27 @@ for t in threads_todo:
 
             new_posts += 1
             post = {"_id": pid}
-
-            author = p.xpath("div/div[@class='pseudo']/a")
-            if not author:
-                author = p.xpath("div[@class='pseudo']/a")
-            post["author"] = clean(author)
-            post["author_id"] = author[0].xpath("@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
-            post["message"] = clean(p.xpath("div/div[@class='messageContent']"))
             post["permalink"] = "%s#%s" % (cururl, pid)
+
 
             date = p.xpath("div/div/div[@class='message_date']")
             if not date:
                 post["deleted"] = True
+                author = p.xpath("div[@class='profil pseudo']/a")
                 post["author_picture"] = ""
+                post["message"] = clean(p.xpath("div[@class='messageContainer']"))
                 post["created_at"] = format_date(post["message"])
             else:
                 post["deleted"] = False
+                author = p.xpath("div/div[@class='pseudo']/a")
                 post["author_picture"] = p.xpath("div/div/div/img[@class='avatar']/@src")[0]
+                post["message"] = clean(p.xpath("div/div[@class='messageContent']"))
                 post["created_at"] = format_date(p.xpath("div/div/div[@class='message_date']"))
                 #TODO post["reply_to_msgs"] =
                 #TODO post["reply_to_users"] =
+
+            post["author"] = clean(author)
+            post["author_id"] = author[0].xpath("@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
 
             post["thread_id"] = t["_id"]
             post["thread_title"] = t["title"]
@@ -136,7 +143,7 @@ for t in threads_todo:
 
         nextpage = page.find_class("next")
         if nextpage:
-            cururl = "http://www.m6.fr/%s" % nextpage[0].xpath("@href")[0].rstrip("/")
+            cururl = "http://www.m6.fr/%s" % nextpage[0].xpath("@href")[0].lstrip("/")
             sleep(1)
         else:
             cururl = None
