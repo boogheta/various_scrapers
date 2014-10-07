@@ -21,12 +21,13 @@ months = {
   'juil.': 7, 'août': 8, 'sept.': 9, 'oct.': 10, 'nov.': 11, 'déc.': 12
 }
 re_date = re.compile(r"(\d+) (\D+) (\d+)")
+re_date_sup = re.compile(r"^.*Message supprimé le (\d+/\d+/\d+ à \d+):(\d+)(?:$|\D.*$)")
 extract_dat = lambda x: (x.year, x.month, x.day)
 def format_date(d):
     try:
         d = clean(d)
     except:
-        d = d.replace("Message supprimé le ", "").rstrip(".")
+        d = re_date_sup.sub(r"\1h\2", d)
     dat, tim = d.split(" à ")
     if dat == "Aujourd'hui":
         now = datetime.today()
@@ -41,10 +42,7 @@ def format_date(d):
             mt = months[mon]
         except:
             dy, mt, yr = dat.split("/")
-    try:
-        hr, mn = tim.replace("mn", "").split("h")
-    except:
-        hr, mn = tim.split(":")
+    hr, mn = tim.replace("mn", "").split("h")
     return datetime(int(yr), int(mt), int(dy), int(hr), int(mn)).isoformat()
 
 # Collect threads list
@@ -121,9 +119,12 @@ for t in threads_todo:
             if not date:
                 post["deleted"] = True
                 author = p.xpath("div[@class='profil pseudo']/a")
-                post["author_picture"] = ""
+                post["author_picture"] = None
                 post["message"] = clean(p.xpath("div[@class='messageContainer']"))
-                post["created_at"] = format_date(post["message"])
+                if post["message"]:
+                    post["created_at"] = format_date(post["message"])
+                else:
+                    post["created_at"] = None
             else:
                 post["deleted"] = False
                 author = p.xpath("div/div[@class='pseudo']/a")
@@ -143,7 +144,9 @@ for t in threads_todo:
 
         nextpage = page.find_class("next")
         if nextpage:
-            cururl = "http://www.m6.fr/%s" % nextpage[0].xpath("@href")[0].lstrip("/")
+            cururl = nextpage[0].xpath("@href")[0]
+            if not cururl.startswith("http"):
+                cururl = "http://www.m6.fr/%s" % cururl.lstrip("/")
             sleep(1)
         else:
             cururl = None
