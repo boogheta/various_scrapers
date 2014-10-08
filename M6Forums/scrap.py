@@ -46,53 +46,54 @@ def format_date(d):
     return datetime(int(yr), int(mt), int(dy), int(hr), int(mn)).isoformat()
 
 # Collect threads list
-new_threads = 0
-for subforum in conf["subfora"]:
-    url_0 = "http://www.m6.fr/%s/forum/%s" % (conf["forum"], subforum + "/" if subforum else "")
-    cururl = url_0
-    while cururl:
-        print >> sys.stderr, "[INFO] Downloading %s" % cururl
-        page = html.fromstring(requests.get(cururl).text)
-        threads = page.find_class("sujet")
-        for t in threads:
-            tid = int(t.xpath("@id")[0].replace("sujet", ""))
-            existing = db["threads"].find_one({"_id": tid})
-            thread = {"_id": tid}
-            thread["modified_at"] = format_date(t.xpath("div[@class='last_post']/div[@class='date']"))
-            thread["modified_by"] = clean(t.xpath("div[@class='last_post']/div[@class='membre']/a"))
-            thread["modified_by_id"] = t.xpath("div[@class='last_post']/div[@class='membre']/a/@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
-            if existing and existing["modified_at"].encode("utf-8") == thread["modified_at"] and existing["modified_by_id"].encode("utf-8") == thread["modified_by_id"]:
-                continue
+if len(sys.argv) < 2:
+    new_threads = 0
+    for subforum in conf["subfora"]:
+        url_0 = "http://www.m6.fr/%s/forum/%s" % (conf["forum"], subforum + "/" if subforum else "")
+        cururl = url_0
+        while cururl:
+            print >> sys.stderr, "[INFO] Downloading %s" % cururl
+            page = html.fromstring(requests.get(cururl).text)
+            threads = page.find_class("sujet")
+            for t in threads:
+                tid = int(t.xpath("@id")[0].replace("sujet", ""))
+                existing = db["threads"].find_one({"_id": tid})
+                thread = {"_id": tid}
+                thread["modified_at"] = format_date(t.xpath("div[@class='last_post']/div[@class='date']"))
+                thread["modified_by"] = clean(t.xpath("div[@class='last_post']/div[@class='membre']/a"))
+                thread["modified_by_id"] = t.xpath("div[@class='last_post']/div[@class='membre']/a/@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
+                if existing and existing["modified_at"].encode("utf-8") == thread["modified_at"] and existing["modified_by_id"].encode("utf-8") == thread["modified_by_id"]:
+                    continue
 
-            new_threads += 1
+                new_threads += 1
 
-            thread["forum"] = conf["forum"]
-            thread["subforum"] = subforum
+                thread["forum"] = conf["forum"]
+                thread["subforum"] = subforum
 
-            title = t.xpath("div[@class='titre']/div/a[@class='title']")
-            thread["url"] = title[0].xpath("@href")[0]
-            if not thread["url"].startswith("http"):
-                thread["url"] = "http://www.m6.fr/%s" % thread["url"].lstrip("/")
-            thread["title"] = clean(title)
+                title = t.xpath("div[@class='titre']/div/a[@class='title']")
+                thread["url"] = title[0].xpath("@href")[0]
+                if not thread["url"].startswith("http"):
+                    thread["url"] = "http://www.m6.fr/%s" % thread["url"].lstrip("/")
+                thread["title"] = clean(title)
 
-            thread["nb_messages"] = int(clean(t.xpath("div[@class='rep']")))
+                thread["nb_messages"] = int(clean(t.xpath("div[@class='rep']")))
 
-            thread["created_at"] = format_date(t.xpath("div[@class='auteur']/div[@class='date']"))
-            thread["created_by"] = clean(t.xpath("div[@class='auteur']/div[@class='membre']/a"))
-            thread["created_by_id"] = t.xpath("div[@class='auteur']/div[@class='membre']/a/@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
+                thread["created_at"] = format_date(t.xpath("div[@class='auteur']/div[@class='date']"))
+                thread["created_by"] = clean(t.xpath("div[@class='auteur']/div[@class='membre']/a"))
+                thread["created_by_id"] = t.xpath("div[@class='auteur']/div[@class='membre']/a/@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
 
-            thread["pinned"] = "stick" in t.get("class")
-            thread["to_scrap"] = True
-            db["threads"].update({"_id": tid}, thread, upsert=True)
+                thread["pinned"] = "stick" in t.get("class")
+                thread["to_scrap"] = True
+                db["threads"].update({"_id": tid}, thread, upsert=True)
 
-        nextpage = page.find_class("next")
-        if nextpage:
-            cururl = nextpage[0].xpath("@href")[0]
-            sleep(1)
-        else:
-            cururl = None
+            nextpage = page.find_class("next")
+            if nextpage:
+                cururl = nextpage[0].xpath("@href")[0]
+                sleep(1)
+            else:
+                cururl = None
 
-print >> sys.stderr, "[INFO] Found %s newly created/modified threads to collect" % new_threads
+    print >> sys.stderr, "[INFO] Found %s newly created/modified threads to collect" % new_threads
 
 
 # Update new threads message list
