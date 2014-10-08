@@ -125,7 +125,7 @@ if len(sys.argv) < 2:
 
 # Update new threads message list
 new_posts = 0
-threads_todo = db["threads"].find({"to_scrap": True}, fields=["url", "title"])
+threads_todo = list(db["threads"].find({"to_scrap": True}, fields=["url", "title"]))
 for t in threads_todo:
     cururl = t["url"]
     while cururl:
