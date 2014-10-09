@@ -163,7 +163,12 @@ for t in threads_todo:
                 post["message"] = innerText(msg, True)
                 post["message_html"] = innerHtml(msg)
                 post["created_at"] = format_date(p.xpath("div/div/div[@class='message_date']"))
-                post["reply_to_users"] = extractUsers(post["message_html"])
+
+            post["reply_to_users"] = extractUsers(post["message_html"])
+            # TODO?
+            # post["links"] = extractLinks(post["message_html"])
+            # post["images"] = extractImages(post["message_html"])
+            # post["smileys"] = extractSmileys(post["message_html"])
 
             post["author"] = innerText(author)
             post["author_id"] = author[0].xpath("@href")[0].encode("utf-8").replace("http://www.m6.fr/forum/profil/", "").rstrip("/")
