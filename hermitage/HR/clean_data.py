@@ -67,7 +67,7 @@ with open("DB.en.csv") as f:
                 people.append(guy)
             guy = {
               "id": line[0].replace("Работник: id = ", ""),
-              "birthdate": format_date(line[1]),
+              "birth_date": format_date(line[1]),
               "education": translate(line[3]),
               "experience": calc_xp(line[4]),
               "hiring_date": format_date(line[5]),
@@ -90,3 +90,19 @@ people.append(guy)
 from pprint import pprint
 with open("DB.en.json", "w") as f:
     json.dump(people, f, indent=2)
+
+metas_head = ["id","birth_date","education","experience","hiring_date","n_positions","first_salary","current_salary"]
+positions_head = ["id","position_order","date","salary_rate","position","salary","department","subdepartment"]
+with open("people-metas.csv", "w") as metas, open("people-positions.csv", "w") as positions:
+    print >> metas, ",".join(metas_head)
+    print >> positions, ",".join(positions_head)
+    for p in people:
+        p["n_positions"] = len(p["positions"])
+        p["first_salary"] = p["positions"][0]["salary"]
+        p["current_salary"] = p["positions"][-1]["salary"]
+        print >> metas, ",".join(['"%s"' % a.encode("utf-8").replace('"', '""') if type(a) is unicode else str(a) for a in [p[h] for h in metas_head]])
+        for po in p["positions"]:
+            po["position_order"] = po["order"]
+            print >> positions, p["id"]+","+",".join(['"%s"' % a.encode("utf-8").replace('"', '""') if type(a) is unicode else str(a) for a in [po[h] for h in positions_head if h != "id"]])
+
+
