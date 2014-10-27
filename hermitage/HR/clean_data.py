@@ -107,4 +107,31 @@ with open("people-metas.csv", "w") as metas, open("people-positions.csv", "w") a
             po["position_order"] = po["order"]
             print >> positions, p["id"]+","+",".join(['"%s"' % a.encode("utf-8").replace('"', '""') if type(a) is unicode else str(a) for a in [po[h] for h in positions_head if h != "id"]])
 
+yearize = lambda p: int(p["date"][:4])
+
+table = {}
+with open("people-years.csv", "w") as years:
+    positions_head.append("year")
+    print >> years, ",".join(positions_head)
+    for p in people:
+        for i, po in enumerate(p["positions"]):
+            if po["department"] not in table:
+                table[po["department"]] = {}
+            po["year"] = yearize(po)
+            try:
+                nexty = yearize(p['positions'][i+1])
+            except:
+                nexty = 2016
+            while po["year"] < nexty:
+                if po["year"] not in table[po["department"]]:
+                    table[po["department"]][po["year"]] = 0
+                table[po["department"]][po["year"]] += 1
+                print >> years, p["id"]+","+",".join(['"%s"' % a.encode("utf-8").replace('"', '""') if type(a) is unicode else str(a) for a in [po[h] for h in positions_head if h != "id"]])
+                po["year"] += 1
+
+with open("departments-years.csv", "w") as depts:
+    print >> depts, "department,year,total"
+    for d in table:
+        for y in table[d]:
+            print >> depts, ",".join([d, str(y), str(table[d][y])])
 
