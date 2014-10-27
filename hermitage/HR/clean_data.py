@@ -91,12 +91,14 @@ from pprint import pprint
 with open("DB.en.json", "w") as f:
     json.dump(people, f, indent=2)
 
-metas_head = ["id","birth_date","education","experience","hiring_date","n_positions","first_salary","current_salary"]
+metas_head = ["id","birth_date","education","experience","hiring_date","n_positions","first_salary","current_salary","n_departments","n_subdepartments"]
 positions_head = ["id","position_order","date","salary_rate","position","salary","department","subdepartment"]
 with open("people-metas.csv", "w") as metas, open("people-positions.csv", "w") as positions:
     print >> metas, ",".join(metas_head)
     print >> positions, ",".join(positions_head)
     for p in people:
+        p["n_departments"] = len(set([po["department"] for po in p["positions"]]))
+        p["n_subdepartments"] = len(set(["%s-%s" % (po["department"], po["subdepartment"]) for po in p["positions"]]))
         p["n_positions"] = len(p["positions"])
         p["first_salary"] = p["positions"][0]["salary"]
         p["current_salary"] = p["positions"][-1]["salary"]
