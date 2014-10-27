@@ -9,7 +9,7 @@ with open("vocab.en-ru.csv") as f:
     for t in csv.reader(f):
         if t[0] in ["", "russian"]:
             continue
-        dico[t[0]] = t[1]
+        dico[t[0]] = t[1].strip()
 
 manual_translations = {
   "Учетно-хранительская часть": "Conservatory/Archivist",
