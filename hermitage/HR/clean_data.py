@@ -108,17 +108,61 @@ with open("people-metas.csv", "w") as metas, open("people-positions.csv", "w") a
             po["position_order"] = po["order"]
             print >> positions, p["id"]+","+",".join(['"%s"' % a.encode("utf-8").replace('"', '""') if type(a) is unicode else str(a) for a in [po[h] for h in positions_head if h != "id"]])
 
+
 yearize = lambda p: int(p["date"][:4])
 
+import string
+letters = ["A%s" % b for b in string.letters[26:]] + ["B%s" % b for b in string.letters[26:]]
+hashmap = {}
+minyear = 2016
+for p in people:
+    for po in p["positions"]:
+        y = yearize(po)
+        minyear = min(y,minyear)
+        if po["department"] not in hashmap:
+            hashmap[po["department"]] = {"_id": len(hashmap)}
+        if po["subdepartment"] not in hashmap[po["department"]]:
+            hashmap[po["department"]][po["subdepartment"]] = {"_id": letters[len(hashmap[po["department"]])-1]}
+        if po["position"] not in hashmap[po["department"]][po["subdepartment"]]:
+            hashmap[po["department"]][po["subdepartment"]][po["position"]] = len(hashmap[po["department"]][po["subdepartment"]])-1
+
+
+with open("table-codes.csv", "w") as tab:
+    print >> tab, "code,department,subdepartment,position"
+    for d in hashmap:
+        for s in hashmap[d]:
+            if s == "_id":
+                continue
+            for p in hashmap[d][s]:
+                if p == "_id":
+                    continue
+                code = "%s-%s-%02d" % (hashmap[d]["_id"], hashmap[d][s]["_id"], hashmap[d][s][p])
+                print >> tab, ",".join(['"%s"' % a.replace('"', '""') for a in [code, d, s, p]])
+
+allyears = [minyear]
+y = minyear + 1
+while y < 2016:
+    allyears.append(y)
+    y += 1
+
 table = {}
-with open("people-years.csv", "w") as years:
+with open("people-years.csv", "w") as years, open("people-matrix.csv", "w") as mat:
     positions_head.append("year")
     print >> years, ",".join(positions_head)
+    print >> mat, "id,%s" % ','.join([str(a) for a in allyears])
     for p in people:
+        line = [p["id"]]
+        y0 = yearize(p["positions"][0])
+        cury = allyears[0]
+        while cury < y0:
+            cury += 1
+            line.append("")
         for i, po in enumerate(p["positions"]):
             if po["department"] not in table:
                 table[po["department"]] = {}
             po["year"] = yearize(po)
+            code = "%s-%s-%02d" % (hashmap[po["department"]]["_id"], hashmap[po["department"]][po["subdepartment"]]["_id"], hashmap[po["department"]][po["subdepartment"]][po["position"]])
+            line.append(code)
             try:
                 nexty = yearize(p['positions'][i+1])
             except:
@@ -127,8 +171,10 @@ with open("people-years.csv", "w") as years:
                 if po["year"] not in table[po["department"]]:
                     table[po["department"]][po["year"]] = 0
                 table[po["department"]][po["year"]] += 1
+                line.append(code)
                 print >> years, p["id"]+","+",".join(['"%s"' % a.encode("utf-8").replace('"', '""') if type(a) is unicode else str(a) for a in [po[h] for h in positions_head if h != "id"]])
                 po["year"] += 1
+        print >> mat, ",".join(line)
 
 with open("departments-years.csv", "w") as depts:
     print >> depts, "department,year,total"
