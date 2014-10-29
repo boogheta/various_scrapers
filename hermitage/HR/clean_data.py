@@ -78,6 +78,7 @@ with open("DB.en.csv") as f:
           "order": n_pos,
           "date": format_date(line[6]),
           "salary_rate": format_float(line[8]),
+          "education": guy["education"],
           "position": translate(line[9]),
           "salary": format_float(line[10]),
           "department": translate(line[11]),
@@ -92,7 +93,7 @@ with open("DB.en.json", "w") as f:
     json.dump(people, f, indent=2)
 
 metas_head = ["id","birth_date","education","experience","hiring_date","n_positions","first_salary","current_salary","n_departments","n_subdepartments"]
-positions_head = ["id","position_order","date","salary_rate","position","salary","department","subdepartment"]
+positions_head = ["id","position_order","date","salary_rate","education","position","salary","department","subdepartment"]
 with open("people-metas.csv", "w") as metas, open("people-positions.csv", "w") as positions:
     print >> metas, ",".join(metas_head)
     print >> positions, ",".join(positions_head)
