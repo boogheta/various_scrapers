@@ -162,7 +162,6 @@ with open("people-years.csv", "w") as years, open("people-matrix.csv", "w") as m
                 table[po["department"]] = {}
             po["year"] = yearize(po)
             code = "%s-%s-%02d" % (hashmap[po["department"]]["_id"], hashmap[po["department"]][po["subdepartment"]]["_id"], hashmap[po["department"]][po["subdepartment"]][po["position"]])
-            line.append(code)
             try:
                 nexty = yearize(p['positions'][i+1])
             except:
