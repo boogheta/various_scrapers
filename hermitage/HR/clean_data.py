@@ -146,6 +146,10 @@ while y < 2016:
     y += 1
 
 table = {}
+listdeps = set()
+listdeps2 = set()
+depmatrix = {}
+depmatrix2 = {}
 with open("people-years.csv", "w") as years, open("people-matrix.csv", "w") as mat:
     positions_head.append("year")
     print >> years, ",".join(positions_head)
@@ -157,10 +161,31 @@ with open("people-years.csv", "w") as years, open("people-matrix.csv", "w") as m
         while cury < y0:
             cury += 1
             line.append("")
+        lastdep = ""
+        lastdep2 = ""
         for i, po in enumerate(p["positions"]):
             if po["department"] not in table:
                 table[po["department"]] = {}
             po["year"] = yearize(po)
+            dep = ("%s / %s" % (po["department"], po["subdepartment"])).replace(",", "")
+            if po["year"] > 2002:
+                if lastdep and lastdep != dep:
+                    listdeps.add(lastdep)
+                    listdeps.add(dep)
+                    if lastdep not in depmatrix:
+                        depmatrix[lastdep] = {}
+                    if dep not in depmatrix[lastdep]:
+                        depmatrix[lastdep][dep] = 0
+                    depmatrix[lastdep][dep] += 1
+                if lastdep2 and lastdep2 != po["department"]:
+                    listdeps2.add(po["department"])
+                    if lastdep2 not in depmatrix2:
+                        depmatrix2[lastdep2] = {}
+                    if po['department'] not in depmatrix2[lastdep2]:
+                        depmatrix2[lastdep2][po['department']] = 0
+                    depmatrix2[lastdep2][po["department"]] += 1
+            lastdep = dep
+            lastdep2 = po['department']
             code = "%s-%s-%02d" % (hashmap[po["department"]]["_id"], hashmap[po["department"]][po["subdepartment"]]["_id"], hashmap[po["department"]][po["subdepartment"]][po["position"]])
             try:
                 nexty = yearize(p['positions'][i+1])
@@ -180,4 +205,19 @@ with open("departments-years.csv", "w") as depts:
     for d in table:
         for y in table[d]:
             print >> depts, ",".join([d, str(y), str(table[d][y])])
+
+listdeps = list(listdeps)
+listdeps.sort()
+with open("subdepartments-matrix.csv", "w") as depts:
+    print >> depts, "left_department," + ",".join(listdeps)
+    for d in listdeps:
+        print >> depts, "%s," % d + ",".join([str(depmatrix.get(d, {d2: 0}).get(d2, 0)) for d2 in listdeps])
+
+listdeps = list(listdeps2)
+listdeps.sort()
+with open("departments-matrix.csv", "w") as depts:
+    print >> depts, "left_department," + ",".join(listdeps)
+    for d in listdeps:
+        print >> depts, "%s," % d + ",".join([str(depmatrix2.get(d, {d2: 0}).get(d2, 0)) for d2 in listdeps])
+
 
