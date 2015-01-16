@@ -12,24 +12,13 @@ def write_graph_in_format(graph, filename, fileformat='gexf') :
     else :
         nx.write_gexf(graph, filename+".gexf")
 
-def add_edge_weight(graph, node1, node2):
-    if graph.has_edge(node1, node2):
-        graph[node1][node2]['weight'] += 1
-    else:
-        graph.add_edge(node1, node2, weight=1)
-
-def clean_empty_nodes(graph, field):
+def clean_low_degree(graph, min_degree=1):
     for n in graph.nodes():
-        if graph.node[n] != {} and not graph.node[n][field]:
-            graph.remove_node(n)
-
-def clean_unused(graph, node_type, field, value=1):
-    for n in graph.nodes():
-        if graph.node[n] != {} and graph.node[n]['type_node'] == node_type and graph.node[n][field] < value:
+        if graph.degree(n) < min_degree:
             graph.remove_node(n)
 
 G = nx.DiGraph()
-with open('/tmp/all-tweets-aime-with-discussions.csv', 'rb') as csvfile:
+with open('all-tweets-aime-with-discussions.csv', 'rb') as csvfile:
     try:
         for row in csv.DictReader(csvfile):
             if not G.has_node(row['id']):
@@ -45,5 +34,6 @@ with open('/tmp/all-tweets-aime-with-discussions.csv', 'rb') as csvfile:
         print "Problem reading placemarks_coords.csv :"
         raise e
 
+clean_low_degree(G)
 write_graph_in_format(G, "aime-tweets-conv")
 
