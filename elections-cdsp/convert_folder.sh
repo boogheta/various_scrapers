@@ -1,8 +1,10 @@
 #!/bin/bash
 
+folder=$1
+
 header="^\(numéro\|code\)"
 
-for file in `ls $1/*.xls`; do
+for file in `ls $folder/*.xls`; do
   rootfile=${file%.xls}
   echo $rootfile
   unoconv -f csv --stdout "$file" | iconv -f "latin1" -t "utf8" > "$rootfile.tmp"
@@ -11,3 +13,27 @@ for file in `ls $1/*.xls`; do
   rm -f "$rootfile.tmp"
   echo "  ->  "`cat "$rootfile.csv" | wc -l`
 done
+
+cur=""
+ls $folder/*comm*00*.csv | while read comfile; do
+  ser=`echo $comfile | sed 's/^\(.*\_comm\).*$/\1/'`
+  if [ "$cur" = $ser ]; then
+    cur=""
+    echo "Assembling communes files for $ser"
+    suf=""
+    if ! (ls $ser*3500.csv > /dev/null 2>&1 || ls $ser*3500-ag.csv > /dev/null 2>&1 ); then
+     suf="p3500"
+    fi
+    head -1 $ser*.csv | grep "," | grep -v "==>" | uniq > $ser$suf.tmp
+    cat $ser*00*.csv | grep -i -v "$header" | sort -t "," -k 1n -k 3n >> $ser$suf.tmp
+    mkdir -p old
+    mv $ser*00*.csv old/
+    mv $ser$suf.{tmp,csv}
+    cat $ser*00*.txt $ser$suf.txt.tmp
+    mv $ser*00*.txt old/
+    mv $ser$suf.txt{.tmp,}
+  else
+    cur=$ser
+  fi
+done
+
