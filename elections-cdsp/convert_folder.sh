@@ -29,7 +29,7 @@ ls $folder/*comm*00*.csv | while read comfile; do
     mkdir -p old
     mv $ser*00*.csv old/
     mv $ser$suf.{tmp,csv}
-    cat $ser*00*.txt $ser$suf.txt.tmp
+    cat $ser*00*.txt > $ser$suf.txt.tmp
     mv $ser*00*.txt old/
     mv $ser$suf.txt{.tmp,}
   else
@@ -37,3 +37,9 @@ ls $folder/*comm*00*.csv | while read comfile; do
   fi
 done
 
+mkdir -p $folder/xls $folder/csv
+mv $folder/*.xls $folder/xls/
+zip -r $folder/$folder-xls.zip $folder/xls
+mv $folder/*.csv $folder/csv/
+mv $folder/*.txt $folder/csv/
+zip -r $folder/$folder-csv $folder/csv
