@@ -15,7 +15,7 @@ for file in `ls $folder/*.xls`; do
 done
 
 cur=""
-ls $folder/*comm*00*.csv | while read comfile; do
+ls $folder/*comm*00*.csv 2> /dev/null | while read comfile; do
   ser=`echo $comfile | sed 's/^\(.*\_comm\).*$/\1/'`
   if [ "$cur" = $ser ]; then
     cur=""
