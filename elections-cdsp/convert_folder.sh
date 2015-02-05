@@ -4,8 +4,9 @@ folder=$1
 
 header="^\(numéro\|code\)"
 
-for file in `ls $folder/*.xls`; do
-  rootfile=${file%.xls}
+for file in `ls $folder/*.xls*`; do
+  rootfile=${file%.xlsx}
+  rootfile=${rootfile%.xls}
   echo $rootfile
   unoconv -f csv --stdout "$file" | iconv -f "latin1" -t "utf8" > "$rootfile.tmp"
   grep -A `cat $rootfile.tmp | wc -l` -i "$header" "$rootfile.tmp" > "$rootfile.csv"
@@ -37,8 +38,8 @@ ls $folder/*comm*00*.csv 2> /dev/null | while read comfile; do
   fi
 done
 
-mkdir -p $folder/xls $folder/csv
-mv $folder/*.xls $folder/xls/
+mkdir -p $folder/xls* $folder/csv
+mv $folder/*.xls* $folder/xls/
 zip -r $folder/$folder-xls.zip $folder/xls
 mv $folder/*.csv $folder/csv/
 mv $folder/*.txt $folder/csv/
