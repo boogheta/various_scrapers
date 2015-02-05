@@ -38,7 +38,7 @@ ls $folder/*comm*00*.csv 2> /dev/null | while read comfile; do
   fi
 done
 
-mkdir -p $folder/xls* $folder/csv
+mkdir -p $folder/xls $folder/csv
 mv $folder/*.xls* $folder/xls/
 zip -r $folder/$folder-xls.zip $folder/xls
 mv $folder/*.csv $folder/csv/
