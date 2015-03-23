@@ -1,0 +1,22 @@
+{
+  "name": "prenoms",
+  "version": "0.1.0",
+  "description": "Scrap similar surnames from meilleursprenoms.com & prenoms.com",
+  "main": "prenoms.com.js",
+  "dependencies": {
+    "sandcrawler": "git+https://github.com/medialab/sandcrawler",
+    "sandcrawler-dashboard": "git+https://github.com/medialab/sandcrawler-dashboard",
+    "sandcrawler-logger": "git+https://github.com/Yomguithereal/sandcrawler-logger",
+    "jsonfile": "~2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "cp sandcrawler_src_engines_static.js node_modules/sandcrawler/src/engines/static.js"
+    "pipinstall": "pip install networkx"
+    "prenoms": "./prenoms.com.js && ./build_network.py prenoms.com.json"
+    "meilleursprenoms": "./meilleursprenoms.com.js && ./build_network.py meilleursprenoms.com.json"
+  },
+  "author": "boogheta",
+  "license": "GPL"
+}
