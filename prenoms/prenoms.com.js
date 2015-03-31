@@ -8,7 +8,7 @@ var fs = require('fs'),
     return u.replace(/^(http.*?\.com)?\//, 'http://www.prenoms.com/');
   },
   logConf = {
-    level: 'verbose',
+    // level: 'verbose',
     pageLog: false
   },
   results = [],
@@ -16,8 +16,8 @@ var fs = require('fs'),
 
 //var droid = sandcrawler.phantomDroid()
 var droid = sandcrawler.droid()
-  //.use(logger(logConf))
-  .use(dashboard({logger: logConf}))
+  .use(logger(logConf))
+  //.use(dashboard({logger: logConf}))
   .config({
     timeout: 30000,
     maxRetries: 5,
@@ -27,11 +27,11 @@ var droid = sandcrawler.droid()
   .throttle(150, 500)
   .urls(function(){
     var urls = [];
-    for (var i='a'.charCodeAt(0); i<= 'z'.charCodeAt(0); i++) {
+    for (var i='c'.charCodeAt(0); i<= 'c'.charCodeAt(0); i++) {
       var url = "http://www.prenoms.com/future-maman-idee-prenom-#SEXE#-" + String.fromCharCode(i) + ".html";
       urls.push({
         url: url.replace("#SEXE#", "garcon"),
-        data: {sex: 'M'}
+        data: {sex: 'F'}
       });
       urls.push({
         url: url.replace("#SEXE#", "fille"),
@@ -54,8 +54,10 @@ var droid = sandcrawler.droid()
 
     // Scrape names's similars from name's page
     if (!output.items.length)
-      output.similars = $("#autres-idees-prenoms a").scrape(scraper);
-
+    {  
+      output.similars_M = $(".prenom-idees-genre.Masculin a").scrape(scraper);
+      output.similars_F = $(".prenom-idees-genre.Feminin a").scrape(scraper);
+    }
     done(null, output);
   })
   .result(function(err, req, res) {
@@ -74,6 +76,12 @@ var droid = sandcrawler.droid()
         doneItemUrls[job.url] = true;
         this.addUrl(job);
       }
+      // else {
+      //   results.filter(function(e){return e.url === job.url}).forEach(function(e){
+      //     if(e.sex != job.data.sex)
+      //       e.sex="FF"
+      //   })
+      // }
     };
 
     // Stack items pages from search results
@@ -82,22 +90,41 @@ var droid = sandcrawler.droid()
     // otherwise we're in a name's page:
     else {
       // Stack names found via similarities
-      if (res.data.similars.length) {
-        res.data.similars.forEach(push_url, this);
-        this.logger.info(res.data.similars.length + ' similar names of ' + req.data.name);
+
+      if (res.data.similars_M.length) {
+        res.data.similars_M.forEach(push_url, this);
+        this.logger.info(res.data.similars_M.length + ' similar names of ' + req.data.name);
+      
+        res.data.similars_M=res.data.similars_M.slice(0,19);
+        results.push({
+            url: req.url,
+            name: req.data.name,
+            sex: "M",
+            similars: res.data.similars_M.map(function(a){
+              return a.name;
+            })
+        });
       }
-      results.push({
-        url: req.url,
-        name: req.data.name,
-        sex: req.data.sex,
-        similars: res.data.similars.map(function(a){
-          return a.name;
-        })
-      });
+
+      if (res.data.similars_F.length) {
+        res.data.similars_F.forEach(push_url, this);
+        this.logger.info(res.data.similars_F.length + ' similar names of ' + req.data.name);
+        
+        res.data.similars_F=res.data.similars_F.slice(0,19);
+        results.push({
+            url: req.url,
+            name: req.data.name,
+            sex: "F",
+            similars: res.data.similars_F.map(function(a){
+              return a.name;
+            })
+        });
+      }
+
     }
 
     // Stack next search page
-    res.data.nextPages.forEach(push_url, this);
+    //res.data.nextPages.forEach(push_url, this);
 
   });
 
@@ -106,6 +133,7 @@ var data = [];
 try{
   data = require('./prenoms.com.json');
 } catch(e){
+
 }
 if (data) {
   results = data;
@@ -118,6 +146,10 @@ droid.run(function(err, remains) {
   // TODO Write CSV + errors
 });
 
-process.on("exit", function(){
+writedata=function(){
   fs.writeFileSync("prenoms.com.json", JSON.stringify(results, null, 2));
-});
+  process.exit(0);
+};
+
+process.on("SIGINT", writedata);
+process.on("exit", writedata);
