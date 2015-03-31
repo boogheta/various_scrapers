@@ -44,7 +44,8 @@ var droid = sandcrawler.droid()
     var output = {};
     var scraper = {
       name: {method: function($){ return $(this).text().trim(); }},
-      url: {method: function($){ return absUrl($(this).attr('href'));}}
+      url: {method: function($){ return absUrl($(this).attr('href'));}},
+      weight: {method: function($){ return $(this).css("font-size");} }
     };
 
     // Scrape items from list pages
@@ -101,7 +102,7 @@ var droid = sandcrawler.droid()
             name: req.data.name,
             sex: "M",
             similars: res.data.similars_M.map(function(a){
-              return a.name;
+              return [a.name,a.weight];
             })
         });
       }
@@ -116,7 +117,7 @@ var droid = sandcrawler.droid()
             name: req.data.name,
             sex: "F",
             similars: res.data.similars_F.map(function(a){
-              return a.name;
+              return [a.name,a.weight];
             })
         });
       }
