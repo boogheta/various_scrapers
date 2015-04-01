@@ -14,6 +14,7 @@ var fs = require('fs'),
   results = [],
   doneItemUrls = {};
 
+
 //var droid = sandcrawler.phantomDroid()
 var droid = sandcrawler.droid()
   .use(logger(logConf))
@@ -45,8 +46,14 @@ var droid = sandcrawler.droid()
     var scraper = {
       name: {method: function($){ return $(this).text().trim(); }},
       url: {method: function($){ return absUrl($(this).attr('href'));}},
-      weight: {method: function($){ return $(this).css("font-size");} }
+      weight: {method: function($){ 
+        var class_to_weight={p01:15,p02:20,p03:12,p04:15,p05:15}
+        return class_to_weight[$(this).attr("class")] || 0;
+        }
+      },
+      style_class: {attr: "class"}
     };
+
 
     // Scrape items from list pages
     output.items = $("table table a[href^='/prenom/']").scrape(scraper);
@@ -58,6 +65,7 @@ var droid = sandcrawler.droid()
     {  
       output.similars_M = $(".prenom-idees-genre.Masculin a").scrape(scraper);
       output.similars_F = $(".prenom-idees-genre.Feminin a").scrape(scraper);
+      output.years_frequencies = $("area").scrape(function(){return +$(this).attr("alt").split(" ")[3]});
     }
     done(null, output);
   })
@@ -102,8 +110,9 @@ var droid = sandcrawler.droid()
             name: req.data.name,
             sex: "M",
             similars: res.data.similars_M.map(function(a){
-              return [a.name,a.weight];
-            })
+              return {name:a.name,weight:a.weight,style_class:a.style_class};
+            }),
+            years_frequencies:res.data.years_frequencies
         });
       }
 
@@ -117,8 +126,9 @@ var droid = sandcrawler.droid()
             name: req.data.name,
             sex: "F",
             similars: res.data.similars_F.map(function(a){
-              return [a.name,a.weight];
-            })
+              return {name:a.name,weight:a.weight,style_class:a.style_class};
+            }),
+            years_frequencies:res.data.years_frequencies
         });
       }
 
