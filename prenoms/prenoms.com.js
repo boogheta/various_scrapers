@@ -23,6 +23,7 @@ var droid = sandcrawler.droid()
     timeout: 30000,
     maxRetries: 5,
     concurrency: 8,
+    encoding: "ISO-8859-1",
     proxy: "http://proxy.medialab.sciences-po.fr:3128"
   })
   .throttle(150, 500)
