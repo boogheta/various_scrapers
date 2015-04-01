@@ -22,20 +22,22 @@ var droid = sandcrawler.droid()
     timeout: 30000,
     maxRetries: 5,
     concurrency: 5,
+    encoding: "ISO-8859-1",
     proxy: "http://proxy.medialab.sciences-po.fr:3128"
   })
   .throttle(150, 500)
   .urls(function(){
     var urls = [];
     for (var i='A'.charCodeAt(0); i<= 'Z'.charCodeAt(0); i++) {
+      var letter = String.fromCharCode(i);
       var url = "http://www.meilleursprenoms.com/prenoms_az/az.php3?page=1&premiere=" + String.fromCharCode(i);
       urls.push({
         url: url + "&sex=%M",
-        data: {sex: 'M'}
+        data: {letter: letter, sex: 'M'}
       });
       urls.push({
         url: url + "&sex=%F",
-        data: {sex: 'F'}
+        data: {letter: letter, sex: 'F'}
       });
     }
     return urls;
@@ -68,12 +70,12 @@ var droid = sandcrawler.droid()
       var job = {
         url: item.url || item,
         data: {sex: req.data.sex}
-      };
+      }, when = (item.url ? "now" : "later");
       if (item.name)
         job.data.name = item.name
       if (!doneItemUrls[job.url]) {
         doneItemUrls[job.url] = true;
-        this.addUrl(job);
+        this.addUrl(job, when);
       }
     };
 
@@ -115,10 +117,12 @@ if (data) {
   });
   droid.logger.info('Starting scraping with already ' + Object.keys(doneItemUrls).length + ' items processed');
 }
-droid.run(function(err, remains) {
-  // TODO Write CSV + errors
-});
+droid.run();
 
-process.on("exit", function(){
+writedata=function(){
   fs.writeFileSync("meilleursprenoms.com.json", JSON.stringify(results, null, 2));
-});
+  process.exit(0);
+};
+
+process.on("SIGINT", writedata);
+process.on("exit", writedata);
