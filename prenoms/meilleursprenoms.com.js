@@ -75,19 +75,19 @@ var droid = sandcrawler.droid()
         job.data.name = item.name
       if (!doneItemUrls[job.url]) {
         doneItemUrls[job.url] = true;
-        this.addUrl(job, when);
+        droid.addUrl(job, when);
       }
     };
 
     // Stack items pages from search results
     if (res.data.items.length)
-      res.data.items.forEach(push_url, this);
+      res.data.items.forEach(push_url);
     // otherwise we're in a name's page:
     else {
       // Stack names found via similarities
       if (res.data.similars.length) {
-        res.data.similars.forEach(push_url, this);
-        this.logger.info(res.data.similars.length + ' similar names of ' + req.data.name);
+        res.data.similars.forEach(push_url);
+        droid.logger.info(res.data.similars.length + ' similar names of ' + req.data.name);
       }
       results.push({
         url: req.url,
@@ -100,7 +100,7 @@ var droid = sandcrawler.droid()
     }
 
     // Stack next search page
-    [res.data.nextPage].forEach(push_url, this);
+    [res.data.nextPage].forEach(push_url);
 
   });
 

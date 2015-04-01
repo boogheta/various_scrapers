@@ -95,8 +95,8 @@ var droid = sandcrawler.droid()
         return a.url.indexOf("/.html") == -1;
       });
       // Stack names found via similarities
-      res.data["similars_"+sex].forEach(push_url, this);
-      this.logger.info(res.data["similars_"+sex].length + ' similar ' + sex + ' names of ' + req.data.name);
+      res.data["similars_"+sex].forEach(push_url);
+      droid.logger.info(res.data["similars_"+sex].length + ' similar ' + sex + ' names of ' + req.data.name);
     
       results.push({
         url: req.url,
@@ -116,15 +116,15 @@ var droid = sandcrawler.droid()
 
     // Stack items pages from search results
     if (res.data.items.length)
-      res.data.items.forEach(push_url, this);
+      res.data.items.forEach(push_url);
     // otherwise we're in a name's page:
     else {
-      this.add_similars(res, "M");
-      this.add_similars(res, "F");
+      add_similars(res, "M");
+      add_similars(res, "F");
     }
 
     // Stack next search page
-    res.data.nextPages.forEach(push_url, this);
+    res.data.nextPages.forEach(push_url);
 
   });
 
