@@ -81,12 +81,12 @@ var droid = sandcrawler.droid()
       var job = {
         url: item.url || item,
         data: {sex: req.data.sex}
-      };
+      }, when = (item.url ? "now" : "later");
       if (item.name)
         job.data.name = item.name
       if (!doneItemUrls[job.url]) {
         doneItemUrls[job.url] = true;
-        this.addUrl(job);
+        droid.addUrl(job, when);
       }
     }, add_similars = function(res, sex) {
       if (!res.data["similars_"+sex].length)
