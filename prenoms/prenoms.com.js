@@ -91,6 +91,9 @@ var droid = sandcrawler.droid()
     }, add_similars = function(res, sex) {
       if (!res.data["similars_"+sex].length)
         return;
+      res.data["similars_"+sex] = res.data["similars_"+sex].filter(function(a){
+        return a.url.indexOf("/.html") == -1;
+      });
       // Stack names found via similarities
       res.data["similars_"+sex].forEach(push_url, this);
       this.logger.info(res.data["similars_"+sex].length + ' similar ' + sex + ' names of ' + req.data.name);
@@ -100,7 +103,6 @@ var droid = sandcrawler.droid()
         name: req.data.name,
         sex: sex,
         similars: res.data["similars_"+sex]
-          .slice(0,19)
           .map(function(a){
             return {
               name: a.name,
