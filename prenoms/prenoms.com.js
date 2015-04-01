@@ -8,7 +8,7 @@ var fs = require('fs'),
     return u.replace(/^(http.*?\.com)?\//, 'http://www.prenoms.com/');
   },
   logConf = {
-    // level: 'verbose',
+    level: 'verbose',
     pageLog: false
   },
   results = [],
@@ -17,8 +17,8 @@ var fs = require('fs'),
 
 //var droid = sandcrawler.phantomDroid()
 var droid = sandcrawler.droid()
-  .use(logger(logConf))
-  //.use(dashboard({logger: logConf}))
+  //.use(logger(logConf))
+  .use(dashboard({logger: logConf}))
   .config({
     timeout: 30000,
     maxRetries: 5,
@@ -28,11 +28,11 @@ var droid = sandcrawler.droid()
   .throttle(150, 500)
   .urls(function(){
     var urls = [];
-    for (var i='c'.charCodeAt(0); i<= 'c'.charCodeAt(0); i++) {
+    for (var i='a'.charCodeAt(0); i<='z'.charCodeAt(0); i++) {
       var url = "http://www.prenoms.com/future-maman-idee-prenom-#SEXE#-" + String.fromCharCode(i) + ".html";
       urls.push({
         url: url.replace("#SEXE#", "garcon"),
-        data: {sex: 'F'}
+        data: {sex: 'M'}
       });
       urls.push({
         url: url.replace("#SEXE#", "fille"),
@@ -61,11 +61,12 @@ var droid = sandcrawler.droid()
     output.nextPages = $(".pagination-rcc-prenom a").scrape("href");
 
     // Scrape names's similars from name's page
-    if (!output.items.length)
-    {  
+    if (!output.items.length) {  
       output.similars_M = $(".prenom-idees-genre.Masculin a").scrape(scraper);
       output.similars_F = $(".prenom-idees-genre.Feminin a").scrape(scraper);
-      output.years_frequencies = $("area").scrape(function(){return +$(this).attr("alt").split(" ")[3]});
+      output.years_frequencies = $("area").scrape(function(){
+        return +$(this).attr("alt").split(" ")[3]
+      });
     }
     done(null, output);
   })
@@ -85,12 +86,28 @@ var droid = sandcrawler.droid()
         doneItemUrls[job.url] = true;
         this.addUrl(job);
       }
-      // else {
-      //   results.filter(function(e){return e.url === job.url}).forEach(function(e){
-      //     if(e.sex != job.data.sex)
-      //       e.sex="FF"
-      //   })
-      // }
+    }, add_similars = function(res, sex) {
+      if (!res.data["similars_"+sex].length)
+        return;
+      // Stack names found via similarities
+      res.data["similars_"+sex].forEach(push_url, this);
+      this.logger.info(res.data["similars_"+sex].length + ' similar ' + sex + ' names of ' + req.data.name);
+    
+      results.push({
+        url: req.url,
+        name: req.data.name,
+        sex: sex,
+        similars: res.data["similars_"+sex]
+          .slice(0,19)
+          .map(function(a){
+            return {
+              name: a.name,
+              weight: a.weight,
+              style_class: a.style_class
+            };
+          }),
+          years_frequencies: res.data.years_frequencies
+      });
     };
 
     // Stack items pages from search results
@@ -98,44 +115,12 @@ var droid = sandcrawler.droid()
       res.data.items.forEach(push_url, this);
     // otherwise we're in a name's page:
     else {
-      // Stack names found via similarities
-
-      if (res.data.similars_M.length) {
-        res.data.similars_M.forEach(push_url, this);
-        this.logger.info(res.data.similars_M.length + ' similar names of ' + req.data.name);
-      
-        res.data.similars_M=res.data.similars_M.slice(0,19);
-        results.push({
-            url: req.url,
-            name: req.data.name,
-            sex: "M",
-            similars: res.data.similars_M.map(function(a){
-              return {name:a.name,weight:a.weight,style_class:a.style_class};
-            }),
-            years_frequencies:res.data.years_frequencies
-        });
-      }
-
-      if (res.data.similars_F.length) {
-        res.data.similars_F.forEach(push_url, this);
-        this.logger.info(res.data.similars_F.length + ' similar names of ' + req.data.name);
-        
-        res.data.similars_F=res.data.similars_F.slice(0,19);
-        results.push({
-            url: req.url,
-            name: req.data.name,
-            sex: "F",
-            similars: res.data.similars_F.map(function(a){
-              return {name:a.name,weight:a.weight,style_class:a.style_class};
-            }),
-            years_frequencies:res.data.years_frequencies
-        });
-      }
-
+      this.add_similars(res, "M");
+      this.add_similars(res, "F");
     }
 
     // Stack next search page
-    //res.data.nextPages.forEach(push_url, this);
+    res.data.nextPages.forEach(push_url, this);
 
   });
 
@@ -153,9 +138,7 @@ if (data) {
   });
   droid.logger.info('Starting scraping with already ' + Object.keys(doneItemUrls).length + ' items processed');
 }
-droid.run(function(err, remains) {
-  // TODO Write CSV + errors
-});
+droid.run()
 
 writedata=function(){
   fs.writeFileSync("prenoms.com.json", JSON.stringify(results, null, 2));
