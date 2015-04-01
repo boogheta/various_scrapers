@@ -30,14 +30,15 @@ var droid = sandcrawler.droid()
   .urls(function(){
     var urls = [];
     for (var i='a'.charCodeAt(0); i<='z'.charCodeAt(0); i++) {
+      var letter = String.fromCharCode(i);
       var url = "http://www.prenoms.com/future-maman-idee-prenom-#SEXE#-" + String.fromCharCode(i) + ".html";
       urls.push({
         url: url.replace("#SEXE#", "garcon"),
-        data: {sex: 'M'}
+        data: {letter: letter.toUpperCase(), sex: 'M'}
       });
       urls.push({
         url: url.replace("#SEXE#", "fille"),
-        data: {sex: 'F'}
+        data: {letter: letter.toUpperCase(), sex: 'F'}
       });
     }
     return urls;
