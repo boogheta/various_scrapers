@@ -7,7 +7,8 @@
     "sandcrawler": "git+https://github.com/medialab/sandcrawler",
     "sandcrawler-dashboard": "git+https://github.com/medialab/sandcrawler-dashboard",
     "sandcrawler-logger": "git+https://github.com/Yomguithereal/sandcrawler-logger",
-    "jsonfile": "~2.0.0"
+    "jsonfile": "~2.0.0",
+    "encoding": "~0.1.11"
   },
   "devDependencies": {},
   "scripts": {
