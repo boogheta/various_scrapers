@@ -58,9 +58,10 @@ if __name__ == "__main__":
     G = Graph()
     with open(source) as f:
         for n in json.load(f):
-            G.add_node(n["name"], sex=n["sex"])
+            nb_recent_births=sum(n["years_frequencies"][-5:])
+            G.add_node("%s_%s"%(n["name"],n["sex"]), sex=n["sex"], name=n["name"],url=n["url"],nb_recent_births=nb_recent_births)
             for s in n["similars"]:
-                G.add_edge(n["name"], s)
+                G.add_edge("%s_%s"%(n["name"],n["sex"]),"%s_%s"%(s["name"],n["sex"]),s["weight"])
 
     G.clear_unlinked_nodes()
 
