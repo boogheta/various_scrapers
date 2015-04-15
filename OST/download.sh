@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# List: http://downloads.khinsider.com/game-soundtracks/browse/all
+
 url=$1
 if test -z "$url"; then
   url="http://downloads.khinsider.com/game-soundtracks/album/little-big-adventure-2-twinsen-s-odyssey-original-soundtrack"
