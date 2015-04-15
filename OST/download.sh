@@ -12,13 +12,19 @@ curl -sL "$url"      |
  grep "href=.*\.mp3" |
  sed 's/^.*href="//' |
  sed 's/".*$//'      |
+ sort -u             |
  while read url; do
   fileurl=$(curl -sL "$url" |
    grep "href=.*\.mp3"      |
    sed 's/^.*href="//'      |
-   sed 's/".*$//')
+   sed 's/".*$//'           |
+   head -n 1)
   filename=$(echo $fileurl  |
    sed 's|^.*/\([^/]\+\)$|\1|')
-  echo $fileurl $filename
-  wget "$fileurl" -O "$dir/$filename"
+  echo $dir/$filename
+  if ! test -s "$dir/$filename"; then
+    wget -q "$fileurl" -O "$dir/$filename"
+    echo "...downloaded"
+    echo
+  fi
 done
