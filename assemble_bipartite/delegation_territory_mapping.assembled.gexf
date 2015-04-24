@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?><gexf xmlns:ns0="http://www.gexf.net/1.1draft/viz" version="1.1" xmlns="http://www.gexf.net/1.1draft" xmlns:viz="http://www.gexf.net/1.1draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance">
+  <graph defaultedgetype="undirected" mode="static">
+    <attributes class="node" mode="static">
+      <attribute id="0" title="occurences" type="integer" />
+    </attributes>
+    <nodes>
+      <node id="Bangladesh" label="Bangladesh">
+        <ns0:color b="193" g="46" r="144" />
+        <ns0:size value="6.516854" />
+        <ns0:position x="-1152.267" y="4113.6426" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Ethiopia" label="Ethiopia">
+        <ns0:color b="193" g="111" r="46" />
+        <ns0:size value="7.022472" />
+        <ns0:position x="5913.9365" y="-834.4076" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Forest" label="Forest">
+        <ns0:color b="46" g="193" r="78" />
+        <ns0:size value="35.337082" />
+        <ns0:position x="276.41956" y="-151.1345" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Ecuador" label="Ecuador">
+        <ns0:color b="193" g="46" r="111" />
+        <ns0:size value="6.011236" />
+        <ns0:position x="-4299.8584" y="-1990.729" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Saudi Arabia" label="Saudi Arabia">
+        <ns0:color b="176" g="46" r="193" />
+        <ns0:size value="6.516854" />
+        <ns0:position x="4911.652" y="6280.1157" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Australia" label="Australia">
+        <ns0:color b="46" g="193" r="46" />
+        <ns0:size value="6.011236" />
+        <ns0:position x="-5113.281" y="1867.0656" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Iran" label="Iran">
+        <ns0:color b="233" g="0" r="187" />
+        <ns0:size value="5.0" />
+        <ns0:position x="-10433.778" y="-3342.2727" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Tourism" label="Tourism">
+        <ns0:color b="46" g="78" r="193" />
+        <ns0:size value="5.505618" />
+        <ns0:position x="-98.634384" y="1887.5847" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Arctic Circle" label="Arctic Circle">
+        <ns0:color b="46" g="193" r="46" />
+        <ns0:size value="12.5842705" />
+        <ns0:position x="-3502.4128" y="661.3161" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Maldives" label="Maldives">
+        <ns0:color b="193" g="46" r="144" />
+        <ns0:size value="5.505618" />
+        <ns0:position x="-1170.2931" y="3114.3687" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Poland" label="Poland">
+        <ns0:color b="46" g="111" r="193" />
+        <ns0:size value="5.505618" />
+        <ns0:position x="-7493.3384" y="4286.306" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Ocean" label="Ocean">
+        <ns0:color b="78" g="46" r="193" />
+        <ns0:size value="27.75281" />
+        <ns0:position x="-2087.4927" y="-834.6421" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="United States" label="United States">
+        <ns0:color b="46" g="193" r="111" />
+        <ns0:size value="10.05618" />
+        <ns0:position x="6227.8135" y="1403.9319" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="European Union" label="European Union">
+        <ns0:color b="193" g="46" r="144" />
+        <ns0:size value="5.505618" />
+        <ns0:position x="-1207.1709" y="3129.0159" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Russia" label="Russia">
+        <ns0:color b="9" g="233" r="0" />
+        <ns0:size value="5.0" />
+        <ns0:position x="8581.942" y="5209.2686" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Atmosphere" label="Atmosphere">
+        <ns0:color b="46" g="78" r="193" />
+        <ns0:size value="8.539326" />
+        <ns0:position x="-1254.1859" y="607.9391" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Religion" label="Religion">
+        <ns0:color b="46" g="176" r="193" />
+        <ns0:size value="11.573033" />
+        <ns0:position x="2633.8982" y="-3791.8386" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="South Africa" label="South Africa">
+        <ns0:color b="37" g="233" r="0" />
+        <ns0:size value="5.0" />
+        <ns0:position x="1138.5911" y="-948.02966" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Soil" label="Soil">
+        <ns0:color b="193" g="176" r="46" />
+        <ns0:size value="16.629213" />
+        <ns0:position x="-69.64349" y="-1327.8871" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Mexico" label="Mexico">
+        <ns0:color b="0" g="0" r="233" />
+        <ns0:size value="5.0" />
+        <ns0:position x="260.58994" y="1162.6812" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="India" label="India">
+        <ns0:color b="46" g="78" r="193" />
+        <ns0:size value="5.505618" />
+        <ns0:position x="-1840.1814" y="-1894.6815" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="United Kingdom" label="United Kingdom">
+        <ns0:color b="233" g="121" r="0" />
+        <ns0:size value="5.0" />
+        <ns0:position x="-565.7499" y="-1965.4128" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Mediterranean Sea" label="Mediterranean Sea">
+        <ns0:color b="46" g="144" r="193" />
+        <ns0:size value="13.595506" />
+        <ns0:position x="-2251.9124" y="2413.3167" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Sahara" label="Sahara">
+        <ns0:color b="46" g="46" r="193" />
+        <ns0:size value="7.022472" />
+        <ns0:position x="-1524.9666" y="525.5246" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Japan" label="Japan">
+        <ns0:color b="149" g="233" r="0" />
+        <ns0:size value="5.0" />
+        <ns0:position x="8804.098" y="-3902.288" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+      <node id="Antarctic" label="Antarctic">
+        <ns0:color b="46" g="193" r="46" />
+        <ns0:size value="11.573033" />
+        <ns0:position x="-3717.4756" y="702.63837" z="0.0" />
+        <attvalues>
+          <attvalue for="0" value="1" />
+        </attvalues>
+      </node>
+    </nodes>
+    <edges>
+      <edge id="0" source="Bangladesh" target="European Union" weight="1" />
+      <edge id="1" source="Ocean" target="Mediterranean Sea" weight="2.0" />
+      <edge id="2" source="Ocean" target="Antarctic" weight="2.0" />
+    </edges>
+  </graph>
+</gexf>
