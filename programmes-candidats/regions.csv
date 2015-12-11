@@ -1,18 +1,18 @@
 region,sigle
-Guyane
-La Réunion
-Île-de-France
-Centre-Val de Loire
-Bourgogne - Franche-Comté
-Normandie
-Nord-Pas-de-Calais - Picardie
-Alsace - Champagne-Ardenne - Lorraine
-Pays de la Loire
-Bretagne
-Aquitaine - Limousin - Poitou-Charentes
-Languedoc-Roussillon - Midi-Pyrénées
-Auvergne - Rhône-Alpes
-Provence-Alpes-Côte d'Azur
-Corse
-Guadeloupe
-Martinique
+Guyane          ,GUY
+La Réunion      ,REU
+Île-de-France   ,IDF
+Centre-Val de Loire,CVL
+Bourgogne - Franche-Comté,BFC
+Normandie               ,NORM
+Nord-Pas-de-Calais - Picardie,NPCP
+Alsace - Champagne-Ardenne - Lorraine,ACAL
+Pays de la Loire                                                                                                                                                                                                    ,PL
+Bretagne        ,BRET
+Aquitaine - Limousin - Poitou-Charentes,ALPC
+Languedoc-Roussillon - Midi-Pyrénées,LRMP
+Auvergne - Rhône-Alpes  ,ARA
+Provence-Alpes-Côte d'Azur   ,PACA
+Corse           ,CORS
+Guadeloupe      ,GUAD
+Martinique      ,MART
