@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:
 
-import sys, re, json
+import sys, re, json, html
 
 filepath = sys.argv[1]
 pdffile = filepath.replace("pdfs/", "").replace(".xml", ".pdf")
@@ -62,6 +62,7 @@ for line in ordered_xml:
     lowtext = text.lower()
     if not text or lowtext in ['section', 'nom', "nom d'usage", 'prenom',',', '\x01'] or lowtext.startswith("qualifi") or lowtext.startswith("liste") or lowtext.startswith("mise en ligne") or lowtext.startswith("page ") or lowtext.startswith("maître") or lowtext.startswith("professeur"):
         continue
+    text = html.unescape(text)
     text = re_clean_blanks.sub(r" ", text)
     if text.startswith("<b"):
         if ("b>Section" in text or "b>SECTION" in text) and " Nom" not in text and text != "<b>Section</b>":
