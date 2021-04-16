@@ -5,7 +5,6 @@ mkdir -p pdfs
 curl -sL https://www.galaxie.enseignementsup-recherche.gouv.fr/ensup/cand_resultats_qualification.htm |
  grep "\.pdf.*qualifié"  |
  while read line; do
-  echo $line
   pdfurl="https://www.galaxie.enseignementsup-recherche.gouv.fr/ensup/"$(echo $line | sed 's/<span[^>]*>//' | awk -F '"' '{print $2}')
   pdftitle=$(echo $line | sed 's/^.*Liste des qualifiés //' | sed 's/<.*$//')
   annee=$(echo $pdftitle | awk '{print $1}')
