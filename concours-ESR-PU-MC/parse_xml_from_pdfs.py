@@ -47,7 +47,7 @@ results = []
 headers = ["nom", "nom d'usage", "prénom", "section", "source", "page"]
 record = ["", "", "", "", "", ""]
 cursection = ""
-re_line = re.compile(r'<page number|text top="(\d+)" left="(\d+)"[^>]*font="(\d+)">(.*)</text>', re.I)
+re_line = re.compile(r'<page number|text top="(\d+)" left="(-?\d+)"[^>]*font="(\d+)">(.*)</text>', re.I)
 for line in ordered_xml:
     #print("DEBUG %s" % line, file=sys.stderr)
     if line.startswith('<page'):
@@ -58,7 +58,11 @@ for line in ordered_xml:
     if not attrs or not attrs.groups():
         raise Exception("WARNING : line detected with good font but wrong format %s" % line)
 
+    top = int(attrs.group(1))
+    left = int(attrs.group(2))
+    font = int(attrs.group(3))
     text = attrs.group(4).replace("&amp;", "&").strip()
+
     lowtext = text.lower()
     if not text or lowtext in ['section', 'nom', "nom d'usage", 'prenom',',', '\x01'] or lowtext.startswith("qualifi") or lowtext.startswith("liste") or lowtext.startswith("mise en ligne") or lowtext.startswith("page ") or lowtext.startswith("maître") or lowtext.startswith("professeur"):
         continue
@@ -70,23 +74,23 @@ for line in ordered_xml:
         continue
     try:
         text = int(text)
-        if not pdffile.startswith("2019"):
-            continue
-        else:
+        if (pdffile.startswith("2019") or pdffile.startswith("2020")) and top < 1200:
             cursection = text
+        else:
+            continue
     except:
         pass
 
-    font = int(attrs.group(3))
-
-    top = int(attrs.group(1))
     if top > maxtop:
         maxtop = top
     if not font in topvals:
         topvals[font] = []
     topvals[font].append(top)
 
-    left = int(attrs.group(2))
+    if left < 0 or top < 0:
+        print('WARNING : element detected "outside" the page: %s' % line, file=sys.stderr)
+        left = max(left, 0)
+        top = max(top, 0)
     if left > maxleft:
         maxleft = left
     if not font in leftvals:
@@ -98,13 +102,16 @@ for line in ordered_xml:
 
     #print("DEBUG %s %s %s %s" % (font, left, top, text), file=sys.stderr)
     if left < l1:
-        record[0] = text
+        if pdffile.startswith("2020-qualifies-MC-MNHN"):
+            record[3], record[0] = [a.strip() for a in text.split(" ", 1)]
+        else:
+            record[0] = text
     elif left < l2:
         record[1] = text
     else:
         record[2] = text
     if record[2]:
-        record[3] = cursection
+        record[3] = record[3] or cursection
         record[4] = pdffile
         record[5] = page
         if not record[0]:
