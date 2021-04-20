@@ -2,6 +2,7 @@
 # -*- coding:
 
 import sys, re, json, html
+from itertools import groupby
 
 filepath = sys.argv[1]
 pdffile = filepath.replace("pdfs/", "").replace(".xml", ".pdf")
@@ -16,14 +17,25 @@ with open(filepath, 'r') as xml_file:
 # Reorder xml lines
 ordered_xml = []
 page = []
-extract_position = lambda x: tuple([int(v) for i, v in enumerate(x.split('"')[1:3]) if i != 1])
+is_mc2021 = int(pdffile.startswith("2021-qualifies-MC"))
+def extract_position(line):
+    nature = 0 if line.startswith('<page') else 1
+    positions = [0, 0]
+    if nature:
+        positions = [int(v) for i, v in enumerate(line.split('"')[1:4]) if i != 1]
+    if nature and is_mc2021 and positions[1] < 100:
+        positions[0] -= 1
+    return tuple([nature] + positions)
+
+sort_and_uniq = lambda page: list(i for i, x in groupby(sorted(page, key=extract_position)))
+
 for line in xml.split("\n"):
     if line.startswith('</page'):
-        ordered_xml += sorted(page, key=extract_position)
+        ordered_xml += sort_and_uniq(page)
         page = []
     if line.startswith('<text') or line.startswith('<page'):
         page.append(line)
-ordered_xml += sorted(page, key=extract_position)
+ordered_xml += sort_and_uniq(page)
 
 re_clean_blanks = re.compile(r"\s+")
 re_clean_section = re.compile(r"^(\d+)\s*[:-]\s*(\S.+)")
@@ -102,7 +114,7 @@ for line in ordered_xml:
 
     #print("DEBUG %s %s %s %s" % (font, left, top, text), file=sys.stderr)
     if left < l1:
-        if pdffile.startswith("2020-qualifies-MC-MNHN"):
+        if pdffile.startswith("2020-qualifies-MC-MNHN") or pdffile.startswith("2021"):
             record[3], record[0] = [a.strip() for a in text.split(" ", 1)]
         else:
             record[0] = text
@@ -116,7 +128,8 @@ for line in ordered_xml:
         record[5] = page
         if not record[0]:
             print("WARNING: incomplete record (%s) on page %s for the following line: %s" % (record, page, line), file=sys.stderr)
-        results.append(record)
+        else:
+            results.append(record)
         record = ["", "", "", "", "", ""]
 
 if not drawMap:
